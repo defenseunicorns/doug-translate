@@ -1,11 +1,15 @@
 import { fail } from "@sveltejs/kit";
-import { openai } from "$lib/openai"
-import { Readable } from 'stream'
+import { openai } from "$lib/openai";
+import { Readable } from "stream";
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export function load(event) {
+  return {
+    text: event.locals.text,
+  };
+}
 
 export const actions = {
-  default: async ({ request }) => {
+  upload: async ({ request, locals }) => {
     const formData = Object.fromEntries(await request.formData());
     if (formData.audioUpload === undefined) {
       return fail(400, {
@@ -15,19 +19,22 @@ export const actions = {
     }
     const { audioUpload } = formData;
 
-    console.log(audioUpload)
+    console.log(audioUpload);
 
-    const audioBuffer = Buffer.from(await audioUpload.arrayBuffer())
-    const audioStream = Readable.from(audioBuffer)
-    audioStream.path = audioUpload.name
+    const audioBuffer = Buffer.from(await audioUpload.arrayBuffer());
+    const audioStream = Readable.from(audioBuffer);
+    audioStream.path = audioUpload.name;
 
-    await openai.createTranscription(audioStream, 'whisper-1')
-      .then((res) => {
-        console.log(res.data)
-        return res.data
-      })
+    const { text } = await openai.createTranscription(audioStream, "whisper-1").then((res) => {
+      return res.data;
+    });
+
+    console.log(text);
+    locals.text = text;
 
     return {
+      text: text,
+      fileName: audioUpload.name,
       success: true,
     };
   },

@@ -1,0 +1,1 @@
+<input type="file" class="file-input file-input-bordered file-input-lg w-full max-w-xs" />

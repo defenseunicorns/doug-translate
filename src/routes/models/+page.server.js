@@ -1,9 +1,5 @@
-import { Configuration, OpenAIApi } from "openai";
-import { LEAPFROGAI_BASE_URL } from "$env/static/private";
+import { openai } from '$lib/openai';
 
-const configuration = new Configuration();
-configuration.basePath = LEAPFROGAI_BASE_URL;
-const openai = new OpenAIApi(configuration);
 const getModels = async () => {
   return await openai
     .listModels()

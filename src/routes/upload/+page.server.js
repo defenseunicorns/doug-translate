@@ -1,5 +1,6 @@
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai"
+import { Readable } from 'stream'
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -14,17 +15,17 @@ export const actions = {
     }
     const { audioUpload } = formData;
 
-    await openai.createTranscription(audioUpload, 'whisper-1')
+    console.log(audioUpload)
+
+    const audioBuffer = Buffer.from(await audioUpload.arrayBuffer())
+    const audioStream = Readable.from(audioBuffer)
+    audioStream.path = audioUpload.name
+
+    await openai.createTranscription(audioStream, 'whisper-1')
       .then((res) => {
         console.log(res.data)
         return res.data
       })
-
-    // fs.writeFileSync(`static/${audioUpload.name}`, Buffer.from(await audioUpload.arrayBuffer()));
-
-    // await sleep(6000);
-
-    // fs.rmSync(`static/${audioUpload.name}`, { force: true });
 
     return {
       success: true,

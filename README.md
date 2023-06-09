@@ -1,38 +1,30 @@
-# create-svelte
+# doug-translate
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+Our innovative project combines SvelteKit, Tailwind CSS
+with Daisy UI, the OpenAI JavaScript SDK, and Whisper
+to create a web frontend that allows users to upload
+audio files for accurate transcription and translation
+into their preferred language.
 
-## Creating a project
+With a seamless user experience and industry-leading
+accuracy, we simplify communication and overcome language barriers with ease.
 
-If you're seeing this, you've probably already done this step. Congrats!
-
-```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Dev
 
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+# set LEAPFROGAI_BASE_URL in .env first
+npm ci
+npm run dev --open
 ```
 
-## Building
-
-To create a production version of your app:
+## Bulding the Zarf Package
 
 ```bash
-npm run build
+./hack/build.sh <leapfrog ai url>
 ```
 
-You can preview the production build with `npm run preview`.
+## Running the Zarf Package
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+```bash
+./hack/deploy.sh <leapfrog ai url>
+```

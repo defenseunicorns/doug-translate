@@ -13,6 +13,18 @@
   let formRef;
   let dialogRef;
   let errmessage = "";
+  let transcription;
+  let translationTime;
+  let summary;
+  $: {
+    if (form && form.upload && form.upload.success) {
+      transcription = form.upload.text;
+      filename = form.upload.filename;
+      translationTime = (Date.now() - start) / 1000;
+    } else if (form && form.summarize && form.summarize.success) {
+      summary = form.summarize.summary;
+    }
+  }
 </script>
 
 <svelte:head>
@@ -68,6 +80,28 @@
       action="?/upload"
       bind:this={formRef}
     >
+      <input
+        name="audioUpload"
+        accept={autorizedExtensions.join(",")}
+        required
+        type="file"
+        class="file-input file-input-accent file-input-lg w-full"
+        on:input={(event) => {
+          const file = event.target.files[0];
+          filename = file.name;
+          // this is from BODY_SIZE_LIMIT in the dockerfile
+          if (file.size > 65540000) {
+            errmessage = "File size must be less than 500MB";
+            dialogRef.showModal();
+          }
+        }}
+      />
+      <button
+        disabled={uploading}
+        on:click={startTimer}
+        type="submit"
+        class="btn btn-primary h-auto">Upload</button
+      >
       <select required name="input-language" class="select select-accent w-full max-w-">
         <option disabled selected value="auto">Select an input language (auto detected by default)</option>
         {#each Object.keys(ISO_639_1) as k}
@@ -96,12 +130,30 @@
     </form>
   </section>
 
-  {#if form && !uploading}
+  {#if (form && form.upload && !uploading) || transcription}
     <section class="prose py-3">
-      <code>Translation took {(Date.now() - start) / 1000} seconds</code>
-      <blockquote>"{form.fileName}"</blockquote>
+      <code>Translation took {translationTime} seconds</code>
+      <blockquote>"{filename}"</blockquote>
       <div class="p-3 bg-stone-900 rounded-lg">
-        {form.text}
+        {transcription}
+      </div>
+    </section>
+    <section class="prose py-10">
+      <form method="POST" action="?/summarize" use:enhance>
+        <button
+          type="submit"
+          name="submit"
+          class="btn btn-accent center"
+          value={transcription}>Summarize?</button
+        >
+      </form>
+    </section>
+  {/if}
+
+  {#if form && transcription && form.summarize}
+    <section class="prose py-3">
+      <div class="p-3 bg-stone-900 rounded-lg">
+        {summary}
       </div>
     </section>
   {/if}

@@ -4,6 +4,7 @@
 
 body {
   font-family: "Recursive Variable", sans-serif;
+  @apply bg-base-200 m-0 w-screen h-screen;
 }
 
 pre {

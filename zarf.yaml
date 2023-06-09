@@ -19,6 +19,7 @@ variables:
 
 components:
   - name: translate-ui
+    required: true
     manifests:
       - name: translate-ui
         namespace: dd-doug-translate
@@ -29,6 +30,8 @@ components:
       - defenseunicorns/doug-translate:latest
     actions:
       onDeploy:
+        # before:
+        #   - cmd: ./zarf tools wait-for https ${ZARF_VAR_LEAPFROGAI_BASE_URL} success
         after:
           - wait:
               cluster:

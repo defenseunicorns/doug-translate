@@ -22,7 +22,6 @@
         return async ({ update }) => {
           await update();
           uploading = false;
-          end = Date.now();
         };
       }}
       enctype="multipart/form-data"

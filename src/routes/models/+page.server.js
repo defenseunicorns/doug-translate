@@ -1,14 +1,9 @@
-import { openai } from '$lib/openai';
+import { openai } from "$lib/openai";
 
 const getModels = async () => {
-  return await openai
-    .listModels()
-    .then((res) => {
-      return res.data;
-    })
-    .catch((err) => {
-      console.log(LEAPFROGAI_BASE_URL);
-    });
+  return await openai.listModels().then((res) => {
+    return res.data;
+  });
 };
 
 export async function load() {

@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 body {
-    font-family: 'Recursive Variable', sans-serif;
+  font-family: "Recursive Variable", sans-serif;
 }
 
 pre {
-    font-family: 'PT Mono', monospace;
+  font-family: "PT Mono", monospace;
 }

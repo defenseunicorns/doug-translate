@@ -25,9 +25,11 @@ export const actions = {
     const audioStream = Readable.from(audioBuffer);
     audioStream.path = audioUpload.name;
 
-    const { text } = await openai.createTranscription(audioStream, "whisper-1").then((res) => {
-      return res.data;
-    });
+    const { text } = await openai
+      .createTranscription(audioStream, "whisper-1")
+      .then((res) => {
+        return res.data;
+      });
 
     console.log(text);
     locals.text = text;

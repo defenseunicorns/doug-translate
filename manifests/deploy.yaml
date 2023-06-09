@@ -13,17 +13,17 @@ spec:
         app: doug-translate
     spec:
       containers:
-      - name: frontend
-        image: defenseunicorns/doug-translate:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: LEAPFROGAI_BASE_URL
-          value: "###ZARF_VAR_LEAPFROGAI_BASE_URL###"
-        resources:
-              requests:
-                memory: "64Mi"
-                cpu: "500m"
-              limits:
-                memory: "128Mi"
-                cpu: "1000m"
+        - name: frontend
+          image: defenseunicorns/doug-translate:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: LEAPFROGAI_BASE_URL
+              value: "###ZARF_VAR_LEAPFROGAI_BASE_URL###"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "500m"
+            limits:
+              memory: "128Mi"
+              cpu: "1000m"

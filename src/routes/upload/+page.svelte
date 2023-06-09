@@ -80,28 +80,6 @@
       action="?/upload"
       bind:this={formRef}
     >
-      <input
-        name="audioUpload"
-        accept={autorizedExtensions.join(",")}
-        required
-        type="file"
-        class="file-input file-input-accent file-input-lg w-full"
-        on:input={(event) => {
-          const file = event.target.files[0];
-          filename = file.name;
-          // this is from BODY_SIZE_LIMIT in the dockerfile
-          if (file.size > 65540000) {
-            errmessage = "File size must be less than 500MB";
-            dialogRef.showModal();
-          }
-        }}
-      />
-      <button
-        disabled={uploading}
-        on:click={startTimer}
-        type="submit"
-        class="btn btn-primary h-auto">Upload</button
-      >
       <select required name="input-language" class="select select-accent w-full max-w-">
         <option disabled selected value="auto">Select an input language (auto detected by default)</option>
         {#each Object.keys(ISO_639_1) as k}

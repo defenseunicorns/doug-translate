@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: doug-translate-service
+  annotations:
+    zarf.dev/connect-description: "View the translation UI"
+  labels:
+    zarf.dev/connect-name: "doug-translate"
+spec:
+  selector:
+    app: doug-translate
+  ports:
+    - name: http
+      port: 3000
+      protocol: TCP
+      targetPort: 3000

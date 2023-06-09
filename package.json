@@ -8,7 +8,7 @@
 		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/adapter-node": "^1.2.4",
 		"@sveltejs/kit": "^1.5.0",
 		"@tailwindcss/typography": "^0.5.9",
 		"autoprefixer": "^10.4.14",
@@ -20,6 +20,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"dotenv": "^16.1.4",
 		"openai": "^3.2.1"
 	}
 }

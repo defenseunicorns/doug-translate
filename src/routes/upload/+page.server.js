@@ -17,19 +17,22 @@ export const actions = {
         message: "You must provide a file to upload",
       });
     }
-    const { audioUpload } = formData;
+    let { audioUpload, language } = formData;
 
+    if (language === "auto") {
+      language = undefined;
+    }
+
+    console.log(formData);
     console.log(audioUpload);
 
     const audioBuffer = Buffer.from(await audioUpload.arrayBuffer());
     const audioStream = Readable.from(audioBuffer);
     audioStream.path = audioUpload.name;
 
-    const { text } = await openai
-      .createTranscription(audioStream, "whisper-1")
-      .then((res) => {
-        return res.data;
-      });
+    const { text } = await openai.createTranscription(audioStream, "whisper-1", language).then((res) => {
+      return res.data;
+    });
 
     console.log(text);
     locals.text = text;

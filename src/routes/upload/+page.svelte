@@ -19,7 +19,6 @@
 </svelte:head>
 
 <dialog
-  id="uploadErrorDialog"
   bind:this={dialogRef}
   class="modal"
   on:keydown={(event) => {

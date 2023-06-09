@@ -1,11 +1,28 @@
 <script>
   export let data;
+  let selectedModel;
+  let models;
+  const changeSelection = (event) => {
+    selectedModel = models.find((model) => model.id === event.target.value);
+  };
+  $: models = data.models.data;
 </script>
 
 <svelte:head>
   <title>Models</title>
 </svelte:head>
 
-<h1>Models</h1>
-
-<pre>{JSON.stringify(data.models, null, 2)}</pre>
+<section class="prose">
+  <h1>Models</h1>
+  <div class="flex flex-col gap-4">
+    <select on:change={changeSelection} class="select select-accent w-full max-w-xs">
+      <option disabled selected>Select a model to learn more</option>
+      {#each models as model}
+        <option value={model.id}>{model.id}</option>
+      {/each}
+    </select>
+    {#if selectedModel}
+      <pre>{JSON.stringify(selectedModel, null, 2)}</pre>
+    {/if}
+  </div>
+</section>

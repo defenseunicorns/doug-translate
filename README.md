@@ -9,6 +9,8 @@ into their preferred language.
 With a seamless user experience and industry-leading
 accuracy, we simplify communication and overcome language barriers with ease.
 
+![Screenshot](./static/screenshot.png)
+
 ## Dev
 
 ```bash

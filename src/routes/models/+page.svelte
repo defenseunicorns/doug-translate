@@ -1,4 +1,5 @@
 <script>
+  import { fly, slide } from "svelte/transition";
   export let data;
   let selectedModel;
   let models;
@@ -22,7 +23,7 @@
       {/each}
     </select>
     {#if selectedModel}
-      <pre>{JSON.stringify(selectedModel, null, 2)}</pre>
+      <pre in:slide>{JSON.stringify(selectedModel, null, 2)}</pre>
     {/if}
   </div>
 </section>

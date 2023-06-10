@@ -1,30 +1,28 @@
 <script>
   import { enhance } from "$app/forms";
+  import { slide, fly } from "svelte/transition";
   import { ISO_639_1 } from "$lib/iso";
-
-  const autorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
-  let uploading = false;
   export let form;
-  let start;
-  const startTimer = () => {
-    start = Date.now();
-  };
+  const autorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
+
+  let uploading = false;
+  let summarizing = false;
+
+  let timerStart;
+
   let filename = "";
+
   let formRef;
   let dialogRef;
+
+  let selectedTab = "transcription";
+
   let errmessage = "";
-  let transcription;
-  let translationTime;
-  let summary;
-  $: {
-    if (form && form.upload && form.upload.success) {
-      transcription = form.upload.text;
-      filename = form.upload.filename;
-      translationTime = (Date.now() - start) / 1000;
-    } else if (form && form.summarize && form.summarize.success) {
-      summary = form.summarize.summary;
-    }
-  }
+
+  $: console.log(form);
+
+  $: showTranscription = !uploading && form && form.upload && form.upload.success;
+  $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
 </script>
 
 <svelte:head>
@@ -60,7 +58,7 @@
 {#if uploading}
   <div class="hero min-h-screen">
     <div class="hero-content flex flex-col gap-6 prose">
-      <span class="loading loading-spinner w-40" />
+      <span class="loading loading-infinity w-40" />
       <span class="uppercase text-2xl">processing "{filename.trim()}"</span>
     </div>
   </div>
@@ -103,36 +101,53 @@
             }
           }}
         />
-        <button disabled={uploading} on:click={startTimer} type="submit" class="btn btn-primary h-auto">Upload</button>
+        <button disabled={uploading} on:click={() => (timerStart = Date.now())} type="submit" class="btn btn-primary h-auto">Upload</button>
       </div>
     </form>
   </section>
 
-  {#if (form && form.upload && !uploading) || transcription}
-    <section class="prose py-3">
-      <code>Translation took {translationTime} seconds</code>
+  {#if showTranscription}
+    <section in:slide class="prose max-w-none py-3">
+      <code>Transcription took {(Date.now() - timerStart) / 1000} seconds</code>
       <blockquote>"{filename}"</blockquote>
-      <div class="p-3 bg-stone-900 rounded-lg">
-        {transcription}
-      </div>
-    </section>
-    <section class="prose py-10">
-      <form method="POST" action="?/summarize" use:enhance>
-        <button
-          type="submit"
-          name="submit"
-          class="btn btn-accent center"
-          value={transcription}>Summarize?</button
-        >
-      </form>
-    </section>
-  {/if}
 
-  {#if form && transcription && form.summarize}
-    <section class="prose py-3">
-      <div class="p-3 bg-stone-900 rounded-lg">
-        {summary}
+      {#if showSummary || summarizing}
+        <div class="flex w-full m-auto justify-center">
+          <div class="tabs tabs-boxed">
+            <button on:click={() => (selectedTab = "transcription")} class={`tab text-lg ${selectedTab === "transcription" ? "tab-active" : ""}`}
+              >Transcription</button
+            >
+            <button on:click={() => (selectedTab = "summary")} class={`tab text-lg ${selectedTab === "summary" ? "tab-active" : ""}`}>Summary</button>
+          </div>
+        </div>
+      {/if}
+
+      <div class="p-3 bg-stone-900 rounded-lg my-4">
+        {#if summarizing}
+          <progress class="progress w-56" />
+          <progress class="progress w-56" />
+          <progress class="progress w-56" />
+        {/if}
+        {selectedTab === "transcription" ? form.upload.transcription : form?.summarize?.summary ? form.summarize.summary : ""}
       </div>
+
+      {#if showTranscription && !showSummary}
+        <form
+          in:fly
+          method="POST"
+          action="?/summarize"
+          use:enhance={() => {
+            summarizing = true;
+            return async ({ update }) => {
+              await update();
+              summarizing = false;
+            };
+          }}
+        >
+          <input type="hidden" name="transcription" value={form.upload.transcription} />
+          <button on:click={() => selectedTab = "summary"} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-8">Summarize?</button>
+        </form>
+      {/if}
     </section>
   {/if}
 {/if}

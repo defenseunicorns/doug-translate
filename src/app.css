@@ -10,3 +10,7 @@ body {
 pre {
   font-family: "PT Mono", monospace;
 }
+
+:root, [data-theme] {
+  background-color: inherit;
+}

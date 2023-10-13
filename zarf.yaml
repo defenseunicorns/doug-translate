@@ -22,7 +22,7 @@ components:
     required: true
     manifests:
       - name: translate-ui
-        namespace: dd-doug-translate
+        namespace: doug-translate
         files:
           - manifests/deploy.yaml
           - manifests/connect.yaml
@@ -37,5 +37,5 @@ components:
               cluster:
                 kind: Deployment
                 name: doug-translate-deloyment
-                namespace: dd-doug-translate
+                namespace: doug-translate
                 condition: Available

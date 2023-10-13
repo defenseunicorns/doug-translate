@@ -58,8 +58,9 @@ export const actions = {
       prompt,
     });
     const tokenizedResp = completion.data.choices[0].text;
+
     console.log(tokenizedResp);
-    console.log(typeof tokenizedResp);
+
     const assistantResponseToken = "<|ASSISTANT|>";
 
     const summary = tokenizedResp.substring(tokenizedResp.indexOf(assistantResponseToken)).replace(assistantResponseToken, "");

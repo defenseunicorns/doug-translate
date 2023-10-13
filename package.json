@@ -28,8 +28,5 @@
     "@fontsource/pt-mono": "^5.0.2",
     "dotenv": "^16.1.4",
     "openai": "^3.2.1"
-  },
-  "optionalDependencies": {
-    "fsevents": "*"
   }
 }

@@ -17,10 +17,6 @@ components:
         url: https://istio-release.storage.googleapis.com/charts
     images:
       - "docker.io/istio/pilot:###ZARF_PKG_TMPL_ISTIO_VERSION###"
-    actions:
-      onDeploy:
-        after:
-          - cmd: ./zarf tools kubectl label namespace istio-system istio-injection=enabled
 
   - name: istio-ingress-gateway
     required: true
@@ -28,7 +24,12 @@ components:
       - name: gateway
         version: "###ZARF_PKG_TMPL_ISTIO_VERSION###"
         releaseName: tenant
-        namespace: istio-system
+        namespace: istio-ingress
         url: https://istio-release.storage.googleapis.com/charts
     images:
       - "docker.io/istio/proxyv2:###ZARF_PKG_TMPL_ISTIO_VERSION###"
+    actions:
+      onDeploy:
+        before:
+          - cmd: ./zarf tools kubectl create namespace istio-ingress
+          - cmd: ./zarf tools kubectl label namespace istio-ingress istio-injection=enabled

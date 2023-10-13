@@ -24,12 +24,16 @@ components:
         files:
           - manifests/deploy.yaml
           - manifests/connect.yaml
+          - manifests/istio.yaml
     images:
       - defenseunicorns/doug-translate:latest
     actions:
       onDeploy:
         # before:
         #   - cmd: ./zarf tools wait-for https ${ZARF_VAR_LEAPFROGAI_BASE_URL} success
+        before:
+          - cmd: ./zarf tools kubectl create namespace doug-translate
+          - cmd: ./zarf tools kubectl label namespace doug-translate istio-injection=enabled
         after:
           - wait:
               cluster:

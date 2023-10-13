@@ -25,10 +25,9 @@ jobs:
   setup-build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Kind
-        run: |
-          kind delete cluster && kind create cluster
-          kubectl scale deploy -n kube-system coredns --replicas=1
+      - name: Setup K3d
+        run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+      - run: ./hack/cluster-up.sh
       - name: Setup Zarf
         uses: defenseunicorns/setup-zarf@v1.0.0
         with:
@@ -45,6 +44,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
+      - run: mkdir -p pkgs
       - run: ./hack/build.sh
       - run: ./hack/deploy-amd64.sh "doug-translate.defenseunicorns.com" # dummy address
       - run: zarf package inspect doug-translate

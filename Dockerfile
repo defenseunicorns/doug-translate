@@ -16,7 +16,6 @@ EXPOSE 3000
 ENV NODE_ENV=production
 # 500MB request size limit
 ENV BODY_SIZE_LIMIT=65540000
-# TODO: (@razzle) change this to the actual origin / domain (or expose as env var)
-# as sveltekit will deny requests from other origins unless we disable CRSF (def not)
-ENV ORIGIN=http://localhost:3000
+ENV PROTOCOL_HEADER=x-forwarded-proto 
+ENV HOST_HEADER=x-forwarded-host
 CMD ["-r", "dotenv/config", "build"]

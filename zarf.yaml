@@ -3,17 +3,15 @@ metadata:
   name: doug-translate
   version: 0.0.1
   description: >
-    Our innovative project combines SvelteKit, Tailwind CSS
-    with Daisy UI, the OpenAI JavaScript SDK, and Whisper
-    to create a web frontend that allows users to upload
-    audio files for accurate transcription and translation
-    into their preferred language. With a seamless user
-    experience and industry-leading accuracy, we simplify
-    communication and overcome language barriers with ease.
+    Translate, transcribe, and summarize audio recordings using a self-hosted OpenAI API.
 
 variables:
   - name: LEAPFROGAI_BASE_URL
     description: The base URL for the Leapfrog AI API
+    prompt: true
+    sensitive: true
+  - name: DOMAIN
+    description: The domain to use for the application (istio-ingress shenanigans)
     prompt: true
     sensitive: true
 

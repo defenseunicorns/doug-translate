@@ -6,7 +6,7 @@ COPY . .
 RUN npm run build
 # RUN npm prune --production
 
-FROM cgr.dev/chainguard/node:20
+FROM cgr.dev/chainguard/node:latest
 
 WORKDIR /app
 COPY --chown=node:node --from=builder /app/build build/

@@ -1,6 +1,6 @@
 kind: ZarfPackageConfig
 metadata:
-  name: dd-doug-translate
+  name: doug-translate
   version: 0.0.1
   description: >
     Our innovative project combines SvelteKit, Tailwind CSS

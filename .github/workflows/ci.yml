@@ -46,5 +46,5 @@ jobs:
           cache: npm
       - run: mkdir -p pkgs
       - run: ./hack/build.sh
-      - run: ./hack/deploy-amd64.sh "doug-translate.defenseunicorns.com" # dummy address
+      - run: ./hack/deploy-amd64.sh "leapfrog.du.dev" "du.dev" # dummy address
       - run: zarf package inspect doug-translate

@@ -53,5 +53,5 @@ jobs:
       - name: Setup Zarf
         uses: defenseunicorns/setup-zarf@v1.0.0
       - run: ./hack/build.sh
-      - run: ./hack/deploy-amd64.sh
+      - run: ./hack/deploy-amd64.sh "doug-translate.defenseunicorns.com" # dummy address
       - run: zarf package inspect doug-translate

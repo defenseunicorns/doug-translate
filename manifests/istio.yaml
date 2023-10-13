@@ -25,6 +25,6 @@ spec:
   http:
     - route:
         - destination:
-            host: doug-translate-service.doug-translate.svc.cluster.local
+            host: doug-translate.doug-translate.svc.cluster.local
             port:
               number: 3000

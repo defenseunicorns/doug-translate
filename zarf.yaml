@@ -23,7 +23,7 @@ components:
         namespace: doug-translate
         files:
           - manifests/deploy.yaml
-          - manifests/connect.yaml
+          - manifests/svc.yaml
           - manifests/istio.yaml
     images:
       - defenseunicorns/doug-translate:latest
@@ -36,6 +36,6 @@ components:
           - wait:
               cluster:
                 kind: Deployment
-                name: doug-translate-deloyment
+                name: doug-translate
                 namespace: doug-translate
                 condition: Available

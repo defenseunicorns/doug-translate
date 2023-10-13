@@ -2,6 +2,11 @@
 
 set -euo pipefail
 
+zarf package deploy \
+    pkgs/zarf-package-metallb-setup-amd64.tar.zst \
+    -l=debug \
+    --confirm
+
 ISTIO_VERSION=$(yq .package.create.set.istio_version zarf-config.yaml)
 
 zarf package deploy \

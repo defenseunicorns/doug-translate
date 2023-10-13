@@ -23,7 +23,9 @@ export const actions = {
     const audioStream = Readable.from(audioBuffer);
     audioStream.path = audioUpload.name;
 
-    const raw = await openai.createTranscription(audioStream, "whisper-1").then((res) => {
+    const raw = await openai.createTranscription(audioStream, "whisper-1", options = {
+      maxBodyLength: 300 * 1024 * 1024,
+    }).then((res) => {
       return res.data;
     });
 

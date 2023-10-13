@@ -32,7 +32,6 @@ jobs:
       - name: Setup Zarf
         uses: defenseunicorns/setup-zarf@v1.0.0
         with:
-          version: v0.30.0
           download-init-package: true
       - name: Zarf Init
         run: zarf init --confirm -l=trace --no-progress
@@ -51,6 +50,8 @@ jobs:
         with:
           node-version: 20
           cache: npm
+      - name: Setup Zarf
+        uses: defenseunicorns/setup-zarf@v1.0.0
       - run: ./hack/build.sh
       - run: ./hack/deploy-amd64.sh
       - run: zarf package inspect doug-translate

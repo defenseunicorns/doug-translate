@@ -28,8 +28,3 @@ components:
         url: https://istio-release.storage.googleapis.com/charts
     images:
       - "docker.io/istio/proxyv2:###ZARF_PKG_TMPL_ISTIO_VERSION###"
-    actions:
-      onDeploy:
-        before:
-          - cmd: ./zarf tools kubectl create namespace istio-ingress
-          - cmd: ./zarf tools kubectl label namespace istio-ingress istio-injection=enabled

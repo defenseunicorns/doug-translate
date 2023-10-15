@@ -78,12 +78,6 @@
       action="?/upload"
       bind:this={formRef}
     >
-      <select required name="input-language" class="select select-accent w-full max-w-">
-        <option disabled selected value="auto">Select an input language (auto detected by default)</option>
-        {#each Object.keys(ISO_639_1) as k}
-          <option value={ISO_639_1[k]}>{k}</option>
-        {/each}
-      </select>
       <div class="flex flex-row gap-2">
         <input
           name="audioUpload"

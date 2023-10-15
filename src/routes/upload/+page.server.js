@@ -23,9 +23,12 @@ export const actions = {
     const audioStream = Readable.from(audioBuffer);
     audioStream.path = audioUpload.name;
 
-    const raw = await openai.createTranscription(audioStream, "whisper-1").then((res) => {
+    const raw = await openai.createTranscription(audioStream, "whisper-1", undefined, undefined, undefined, undefined, {
+      maxBodyLength: 500 * 1024 * 1024,
+    }).then((res) => {
       return res.data;
     });
+
     let { text } = raw;
 
     return {
@@ -49,7 +52,7 @@ export const actions = {
     const prompt = `<|SYSTEM|>you're such a cool summarizer<|USER|>${transcription}<|ASSISTANT|>`;
 
     const completion = await openai.createCompletion({
-      model: "stablelm-3b",
+      model: "mpt-7b-chat",
       max_tokens: 50,
       temperature: 0.5,
       top_p: 1.0,

@@ -1,0 +1,50 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - name: Use Node.js latest
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
+        with:
+          node-version: latest
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+
+  setup-build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+      - name: Setup K3d
+        run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+      - run: ./hack/cluster-up.sh
+      - name: Setup Zarf
+        uses: defenseunicorns/setup-zarf@v1.0.0
+        with:
+          download-init-package: true
+      - name: Zarf Init
+        run: zarf init --confirm -l=trace --no-progress
+      - name: Deploy Dos-Games
+        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --no-progress --oci-concurrency=5 --key https://zarf.dev/cosign.pub
+      - name: List Packages
+        run: zarf package list
+      - name: Use Node.js 20
+        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
+        with:
+          node-version: 20
+          cache: npm
+      - run: mkdir -p pkgs
+      - run: ./hack/build.sh
+      - run: ./hack/deploy-amd64.sh "leapfrog.du.dev" "du.dev" # dummy address
+      - run: zarf package inspect doug-translate

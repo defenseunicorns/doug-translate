@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: doug-translate-deloyment
+  name: doug-translate
 spec:
   selector:
     matchLabels:
       app: doug-translate
-  replicas: 2 # tells deployment to run 2 pods matching the template
+  replicas: 1
   template:
     metadata:
       labels:
         app: doug-translate
     spec:
       containers:
-        - name: frontend
+        - name: doug-translate
           image: defenseunicorns/doug-translate:latest
           ports:
             - containerPort: 3000

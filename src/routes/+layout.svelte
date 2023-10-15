@@ -1,6 +1,6 @@
 <script>
   import "../app.css";
-  import "@fontsource-variable/recursive/mono.css";
+  import "@fontsource/pt-sans";
   import "@fontsource/pt-mono";
 </script>
 
@@ -12,7 +12,6 @@
     <ul class="menu menu-horizontal px-1">
       <li><a href="/models">Models</a></li>
       <li><a href="/upload">Upload</a></li>
-      <li><a href="/about">About</a></li>
     </ul>
   </div>
 </nav>

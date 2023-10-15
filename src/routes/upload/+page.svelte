@@ -1,7 +1,6 @@
 <script>
   import { enhance } from "$app/forms";
   import { slide, fly } from "svelte/transition";
-  import { ISO_639_1 } from "$lib/iso";
   export let form;
   const autorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
 

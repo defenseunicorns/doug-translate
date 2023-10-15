@@ -1,19 +1,17 @@
 kind: ZarfPackageConfig
 metadata:
-  name: dd-doug-translate
+  name: doug-translate
   version: 0.0.1
   description: >
-    Our innovative project combines SvelteKit, Tailwind CSS
-    with Daisy UI, the OpenAI JavaScript SDK, and Whisper
-    to create a web frontend that allows users to upload
-    audio files for accurate transcription and translation
-    into their preferred language. With a seamless user
-    experience and industry-leading accuracy, we simplify
-    communication and overcome language barriers with ease.
+    Translate, transcribe, and summarize audio recordings using a self-hosted OpenAI API.
 
 variables:
   - name: LEAPFROGAI_BASE_URL
     description: The base URL for the Leapfrog AI API
+    prompt: true
+    sensitive: true
+  - name: DOMAIN
+    description: The domain to use for the application (istio-ingress shenanigans)
     prompt: true
     sensitive: true
 
@@ -22,10 +20,11 @@ components:
     required: true
     manifests:
       - name: translate-ui
-        namespace: dd-doug-translate
+        namespace: doug-translate
         files:
           - manifests/deploy.yaml
-          - manifests/connect.yaml
+          - manifests/svc.yaml
+          - manifests/istio.yaml
     images:
       - defenseunicorns/doug-translate:latest
     actions:
@@ -33,9 +32,10 @@ components:
         # before:
         #   - cmd: ./zarf tools wait-for https ${ZARF_VAR_LEAPFROGAI_BASE_URL} success
         after:
+          - cmd: ./zarf tools kubectl label namespace doug-translate istio-injection=enabled
           - wait:
               cluster:
                 kind: Deployment
-                name: doug-translate-deloyment
-                namespace: dd-doug-translate
+                name: doug-translate
+                namespace: doug-translate
                 condition: Available

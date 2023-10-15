@@ -27,5 +27,8 @@
     "@fontsource/pt-mono": "^5.0.2",
     "dotenv": "^16.1.4",
     "openai": "^3.2.1"
+  },
+  "optionalDependencies": {
+    "@esbuild/darwin-arm64": "^0.17.19"
   }
 }

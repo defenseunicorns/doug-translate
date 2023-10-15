@@ -11,11 +11,7 @@ export const actions = {
         message: "You must provide a file to upload",
       });
     }
-    let { audioUpload, language } = formData;
-
-    if (language === "auto") {
-      language = undefined;
-    }
+    let { audioUpload } = formData;
 
     console.log(audioUpload);
 

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: "Recursive Variable", sans-serif;
+  font-family: "PT Sans", sans-serif;
   @apply bg-base-200 m-0 w-screen h-screen;
 }
 

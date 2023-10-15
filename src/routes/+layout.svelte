@@ -1,6 +1,6 @@
 <script>
   import "../app.css";
-  import "@fontsource-variable/recursive/mono.css";
+  import "@fontsource/pt-sans";
   import "@fontsource/pt-mono";
 </script>
 

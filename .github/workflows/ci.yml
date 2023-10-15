@@ -25,6 +25,7 @@ jobs:
   setup-build-deploy:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - name: Setup K3d
         run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
       - run: ./hack/cluster-up.sh
@@ -38,7 +39,6 @@ jobs:
         run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --no-progress --oci-concurrency=5 --key https://zarf.dev/cosign.pub
       - name: List Packages
         run: zarf package list
-      - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       - name: Use Node.js 20
         uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
         with:

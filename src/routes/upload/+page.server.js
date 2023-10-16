@@ -40,10 +40,30 @@ export const actions = {
     }
     const { transcription } = formData;
 
-    const prompt = `<|SYSTEM|>you're such a cool summarizer<|USER|>${transcription}<|ASSISTANT|>`;
+    const model = "mpt-7b-chat";
+
+    const getSystemPrompt = (model, transcription) => {
+      const systemBasePrompt = "You are a summarizer tasked with creating summaries." +
+          "Your key activities include identifying the main points and key details in the given content, " +
+          "and condensing the information into a concise summary that accurately reflects the original content. " +
+          "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
+          "or distorting the original meaning. Use clear and specific language, " +
+          "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
+          "original content.\n"
+
+      if (model === "mpt-7b-chat") {
+        return `<|im_start|>${systemBasePrompt}<|im_end|>
+        <|im_start|>user ${transcription}<|im_end|>
+        <|im_start|>assistant `;
+      }
+
+      return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcription}<|ASSISTANT|>`;
+    }
+
+    const prompt = getSystemPrompt(model, transcription);
 
     const completion = await openai.completions.create({
-      model: "mpt-7b-chat",
+      model: model,
       max_tokens: 50,
       temperature: 0.5,
       top_p: 1.0,

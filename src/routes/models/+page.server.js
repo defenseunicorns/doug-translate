@@ -1,7 +1,7 @@
 import { openai } from "$lib/openai";
 
 const getModels = async () => {
-  return await openai.listModels().then((res) => {
+  return await openai.models.list().then((res) => {
     return res.data;
   });
 };

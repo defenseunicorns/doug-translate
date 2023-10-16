@@ -1,6 +1,6 @@
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
-import { Readable } from "stream";
+import { toFile } from "openai";
 
 export const actions = {
   upload: async ({ request }) => {
@@ -16,16 +16,11 @@ export const actions = {
     console.log(audioUpload);
 
     const audioBuffer = Buffer.from(await audioUpload.arrayBuffer());
-    const audioStream = Readable.from(audioBuffer);
-    audioStream.path = audioUpload.name;
+    const audioStream = await toFile(audioBuffer);
 
-    const raw = await openai.createTranscription(audioStream, "whisper-1", undefined, undefined, undefined, undefined, {
-      maxBodyLength: 500 * 1024 * 1024,
-    }).then((res) => {
-      return res.data;
+    const text = await openai.audio.transcriptions.create({ model: "whisper-1", file: audioStream }).then((res) => {
+      return res.text;
     });
-
-    let { text } = raw;
 
     return {
       upload: {
@@ -45,10 +40,31 @@ export const actions = {
     }
     const { transcription } = formData;
 
-    const prompt = `<|SYSTEM|>you're such a cool summarizer<|USER|>${transcription}<|ASSISTANT|>`;
+    const model = "mpt-7b-chat";
 
-    const completion = await openai.createCompletion({
-      model: "mpt-7b-chat",
+    const getSystemPrompt = (model, transcription) => {
+      const systemBasePrompt =
+        "You are a summarizer tasked with creating summaries." +
+        "Your key activities include identifying the main points and key details in the given text, " +
+        "and condensing the information into a concise summary that accurately reflects the original text. " +
+        "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
+        "or distorting the original meaning. Use clear and specific language, " +
+        "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
+        "original text.";
+
+      if (model === "mpt-7b-chat") {
+        return `<|im_start|>${systemBasePrompt}<|im_end|>
+        <|im_start|>user ${transcription}<|im_end|>
+        <|im_start|>assistant `;
+      }
+
+      return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcription}<|ASSISTANT|>`;
+    };
+
+    const prompt = getSystemPrompt(model, transcription);
+
+    const completion = await openai.completions.create({
+      model: model,
       max_tokens: 50,
       temperature: 0.5,
       top_p: 1.0,
@@ -56,7 +72,7 @@ export const actions = {
       presence_penalty: 0.0,
       prompt,
     });
-    const tokenizedResp = completion.data.choices[0].text;
+    const tokenizedResp = completion.choices[0].text;
 
     console.log(tokenizedResp);
 

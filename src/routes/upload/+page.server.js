@@ -1,6 +1,6 @@
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
-import {toFile} from "openai";
+import { toFile } from "openai";
 
 export const actions = {
   upload: async ({ request }) => {
@@ -43,13 +43,14 @@ export const actions = {
     const model = "mpt-7b-chat";
 
     const getSystemPrompt = (model, transcription) => {
-      const systemBasePrompt = "You are a summarizer tasked with creating summaries." +
-          "Your key activities include identifying the main points and key details in the given text, " +
-          "and condensing the information into a concise summary that accurately reflects the original text. " +
-          "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
-          "or distorting the original meaning. Use clear and specific language, " +
-          "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
-          "original text."
+      const systemBasePrompt =
+        "You are a summarizer tasked with creating summaries." +
+        "Your key activities include identifying the main points and key details in the given text, " +
+        "and condensing the information into a concise summary that accurately reflects the original text. " +
+        "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
+        "or distorting the original meaning. Use clear and specific language, " +
+        "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
+        "original text.";
 
       if (model === "mpt-7b-chat") {
         return `<|im_start|>${systemBasePrompt}<|im_end|>
@@ -58,7 +59,7 @@ export const actions = {
       }
 
       return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcription}<|ASSISTANT|>`;
-    }
+    };
 
     const prompt = getSystemPrompt(model, transcription);
 

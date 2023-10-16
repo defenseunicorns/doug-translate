@@ -1,6 +1,6 @@
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
-import { Readable } from "stream";
+import {toFile} from "openai";
 
 export const actions = {
   upload: async ({ request }) => {
@@ -16,14 +16,11 @@ export const actions = {
     console.log(audioUpload);
 
     const audioBuffer = Buffer.from(await audioUpload.arrayBuffer());
-    const audioStream = Readable.from(audioBuffer);
-    audioStream.path = audioUpload.name;
+    const audioStream = await toFile(audioBuffer);
 
-    const raw = await openai.audio.transcriptions.create({ model: "whisper-1", file: audioStream }).then((res) => {
-      return res.data;
+    const text = await openai.audio.transcriptions.create({ model: "whisper-1", file: audioStream }).then((res) => {
+      return res.text;
     });
-
-    let { text } = raw;
 
     return {
       upload: {

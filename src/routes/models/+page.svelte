@@ -6,7 +6,7 @@
   const changeSelection = (event) => {
     selectedModel = models.find((model) => model.id === event.target.value);
   };
-  $: models = data.models.data;
+  $: models = data.models;
 </script>
 
 <svelte:head>

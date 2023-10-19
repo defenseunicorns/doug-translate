@@ -2,21 +2,33 @@
   import { enhance } from "$app/forms";
   import { slide, fly } from "svelte/transition";
   export let form;
-  const autorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
 
   let uploading = false;
   let summarizing = false;
 
-  let timerStart;
+  let timerStart: number;
 
-  let filename = "";
-
-  let formRef;
-  let dialogRef;
+  let formRef: HTMLFormElement;
+  let dialogRef: HTMLDialogElement;
 
   let selectedTab = "transcription";
 
   let errmessage = "";
+
+  const autorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
+  let filename = "";
+  const upload = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (!target.files) return;
+    const file = target.files[0];
+    if (!file) return;
+    // this is from BODY_SIZE_LIMIT in the dockerfile
+    if (file.size > 65540000) {
+      errmessage = "File size must be less than 500MB";
+      dialogRef.showModal();
+    }
+    filename = file.name;
+  };
 
   $: console.log(form);
 
@@ -85,15 +97,7 @@
           required
           type="file"
           class="file-input file-input-accent file-input-lg w-full"
-          on:input={(event) => {
-            const file = event.target.files[0];
-            filename = file.name;
-            // this is from BODY_SIZE_LIMIT in the dockerfile
-            if (file.size > 65540000) {
-              errmessage = "File size must be less than 500MB";
-              dialogRef.showModal();
-            }
-          }}
+          on:input={upload}
         />
         <button disabled={uploading} on:click={() => (timerStart = Date.now())} type="submit" class="btn btn-primary h-auto">Upload</button>
       </div>
@@ -122,7 +126,7 @@
           <progress class="progress w-56" />
           <progress class="progress w-56" />
         {/if}
-        {selectedTab === "transcription" ? form.upload.transcription : form?.summarize?.summary ? form.summarize.summary : ""}
+        {selectedTab === "transcription" ? form?.upload?.transcription : form?.summarize?.summary ? form.summarize.summary : ""}
       </div>
 
       {#if showTranscription && !showSummary}
@@ -138,8 +142,8 @@
             };
           }}
         >
-          <input type="hidden" name="transcription" value={form.upload.transcription} />
-          <button on:click={() => selectedTab = "summary"} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-8">Summarize?</button>
+          <input type="hidden" name="transcription" value={form?.upload?.transcription} />
+          <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-8">Summarize?</button>
         </form>
       {/if}
     </section>

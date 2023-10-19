@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { enhance } from "$app/forms";
   import { slide, fly } from "svelte/transition";
   export let form;

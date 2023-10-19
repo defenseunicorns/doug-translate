@@ -10,16 +10,16 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-node": "^1.2.4",
-    "@sveltejs/kit": "^1.5.0",
+    "@sveltejs/kit": "^1.26.0",
     "@tailwindcss/typography": "^0.5.9",
     "autoprefixer": "^10.4.14",
-    "daisyui": "^3.0.20",
+    "daisyui": "^3.9.3",
     "eslint": "^8.28.0",
     "eslint-plugin-svelte": "^2.26.0",
     "postcss": "^8.4.31",
-    "svelte": "^3.54.0",
+    "svelte": "^4.2.1",
     "tailwindcss": "^3.3.2",
-    "vite": "^4.3.0"
+    "vite": "^4.5.0"
   },
   "type": "module",
   "dependencies": {

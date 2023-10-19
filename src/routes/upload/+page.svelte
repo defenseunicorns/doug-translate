@@ -28,6 +28,7 @@
   <title>Upload</title>
 </svelte:head>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <dialog
   bind:this={dialogRef}
   class="modal"

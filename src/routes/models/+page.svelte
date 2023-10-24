@@ -1,6 +1,6 @@
 <script lang="ts">
-  import type { Model } from "openai/resources/models.js";
   import { slide } from "svelte/transition";
+  import type { Model } from "openai/resources";
   export let data;
   let selectedModel: Model | undefined;
   let models: Model[] = [];

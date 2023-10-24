@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: doug-translate
-          image: defenseunicorns/doug-translate:latest
+          image: defenseunicorns/doug-translate:0.0.1
           ports:
             - containerPort: 3000
           env:

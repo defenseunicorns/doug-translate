@@ -8,10 +8,12 @@ metadata:
 variables:
   - name: LEAPFROGAI_BASE_URL
     description: The base URL for the Leapfrog AI API
+    default: http://api.leapfrogai.svc.cluster.local:8080/openai/v1
     prompt: true
     sensitive: true
   - name: DOMAIN
     description: The domain to use for the application (istio-ingress shenanigans)
+    default: bigbang.dev
     prompt: true
     sensitive: true
 
@@ -26,7 +28,7 @@ components:
           - manifests/svc.yaml
           - manifests/istio.yaml
     images:
-      - defenseunicorns/doug-translate:latest
+      - defenseunicorns/doug-translate:0.0.1
     actions:
       onDeploy:
         # before:

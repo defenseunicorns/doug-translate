@@ -1,36 +1,39 @@
+import type { Actions, RequestEvent } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
 import { toFile } from "openai";
 
 export const actions = {
-  upload: async ({ request }) => {
-    const formData = Object.fromEntries(await request.formData());
-    if (formData.audioUpload === undefined) {
+  upload: async ({ request }: RequestEvent) => {
+    const formData = await request.formData();
+
+    const audio = formData.get("audioUpload") as File;
+
+    if (audio === undefined) {
       return fail(400, {
         error: true,
         message: "You must provide a file to upload",
       });
     }
-    let { audioUpload } = formData;
 
-    console.log(audioUpload);
+    console.log(audio);
 
-    const audioBuffer = Buffer.from(await audioUpload.arrayBuffer());
-    const audioStream = await toFile(audioBuffer);
+    const buf = Buffer.from(await audio.arrayBuffer());
+    const stream = await toFile(buf);
 
-    const text = await openai.audio.transcriptions.create({ model: "whisper-1", file: audioStream }).then((res) => {
+    const text = await openai.audio.transcriptions.create({ model: "whisper-1", file: stream }).then((res) => {
       return res.text;
     });
 
     return {
       upload: {
         transcription: text,
-        filename: audioUpload.name,
+        filename: audio.name,
         success: true,
       },
     };
   },
-  summarize: async ({ request }) => {
+  summarize: async ({ request }: RequestEvent) => {
     const formData = Object.fromEntries(await request.formData());
     if (formData.transcription === undefined) {
       return fail(400, {
@@ -42,7 +45,7 @@ export const actions = {
 
     const model = "mpt-7b-chat";
 
-    const getSystemPrompt = (model, transcription) => {
+    const getSystemPrompt = (model: string, transcription: string) => {
       const systemBasePrompt =
         "You are a summarizer tasked with creating summaries." +
         "Your key activities include identifying the main points and key details in the given text, " +
@@ -61,7 +64,7 @@ export const actions = {
       return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcription}<|ASSISTANT|>`;
     };
 
-    const prompt = getSystemPrompt(model, transcription);
+    const prompt = getSystemPrompt(model, transcription as string);
 
     const completion = await openai.completions.create({
       model: model,
@@ -91,4 +94,4 @@ export const actions = {
       },
     };
   },
-};
+} satisfies Actions;

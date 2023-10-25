@@ -21,9 +21,6 @@ npm run dev --open
 ```bash
 ./hack/deploy-amd64.sh <leapfrog ai url> <istio domain>
 ```
-<<<<<<< Updated upstream
-=======
-
 ## Deploying on DUBBD (wip)
 
 1. Deploy DUBBD
@@ -42,4 +39,3 @@ zarf package deploy \
     -l=debug \
     --confirm
 ```
->>>>>>> Stashed changes

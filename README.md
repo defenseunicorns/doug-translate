@@ -21,7 +21,7 @@ npm run dev --open
 ```bash
 ./hack/deploy-amd64.sh <leapfrog ai url> <istio domain>
 ```
-## Deploying on DUBBD (wip)
+## Deploying on DUBBD
 
 1. Deploy DUBBD
 2. Edit values in `manifests` to match DUBBD istio config

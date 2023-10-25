@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
   import { slide } from "svelte/transition";
+  import type { Model } from "openai/resources";
   export let data;
-  let selectedModel;
-  let models;
-  const changeSelection = (event) => {
-    selectedModel = models.find((model) => model.id === event.target.value);
+  let selectedModel: Model | undefined;
+  let models: Model[] = [];
+  const changeSelection = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (!target.value) return;
+    selectedModel = models.find((model) => model.id === target.value);
   };
   $: models = data.models;
 </script>

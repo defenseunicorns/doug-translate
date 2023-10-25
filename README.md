@@ -21,7 +21,6 @@ npm run dev --open
 ```bash
 ./hack/deploy-amd64.sh <leapfrog ai url> <istio domain>
 ```
-
 ## Deploying on DUBBD (wip)
 
 1. Deploy DUBBD
@@ -29,7 +28,7 @@ npm run dev --open
 3. Create `doug-translate`'s Zarf package and deploy it
 
 ```bash
-docker build . -t defenseunicorns/doug-translate:latest
+docker build . -t defenseunicorns/doug-translate:0.0.1
 
 zarf package create -o pkgs --confirm
 

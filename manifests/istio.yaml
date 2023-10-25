@@ -1,25 +1,10 @@
 apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: doug-translate-gateway
-spec:
-  selector:
-    istio: tenant
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "doug-translate.###ZARF_VAR_DOMAIN###"
----
-apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: doug-translate
 spec:
   gateways:
-    - doug-translate-gateway
+    - istio-system/tenant
   hosts:
     - "doug-translate.###ZARF_VAR_DOMAIN###"
   http:

@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-docker build . -t defenseunicorns/doug-translate:latest
+docker build . -t defenseunicorns/doug-translate:0.0.1
 
 mkdir -p pkgs
 

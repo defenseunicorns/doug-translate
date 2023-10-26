@@ -18,4 +18,4 @@ ENV NODE_ENV=production
 ENV BODY_SIZE_LIMIT=65540000
 ENV PROTOCOL_HEADER=x-forwarded-proto 
 ENV HOST_HEADER=x-forwarded-host
-CMD ["-r", "dotenv/config", "build"]
+CMD ["build"]

@@ -68,7 +68,7 @@ export const actions = {
 
     const completion = await openai.completions.create({
       model: model,
-      max_tokens: 50,
+      max_tokens: 500,
       temperature: 0.5,
       top_p: 1.0,
       frequency_penalty: 0.5,

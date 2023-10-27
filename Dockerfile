@@ -3,8 +3,9 @@ WORKDIR /app
 COPY package*.json .
 RUN npm ci
 COPY . .
+ENV NODE_ENV=production
 RUN npm run build
-# RUN npm prune --production
+RUN npm prune
 
 FROM cgr.dev/chainguard/node:latest
 
@@ -18,4 +19,4 @@ ENV NODE_ENV=production
 ENV BODY_SIZE_LIMIT=65540000
 ENV PROTOCOL_HEADER=x-forwarded-proto 
 ENV HOST_HEADER=x-forwarded-host
-CMD ["-r", "dotenv/config", "build"]
+CMD ["build"]

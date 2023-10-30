@@ -32,12 +32,13 @@ docker build . -t defenseunicorns/doug-translate:0.0.1
 
 zarf package create -o pkgs --confirm
 
-# <url> and <domain> are optional
-# default <url> and <domain> are located in the zarf.yaml
+# <url>, <model_name> and <domain> are optional
+# defaults for these values are located in the zarf.yaml
 zarf package deploy \
     pkgs/zarf-package-doug-translate-amd64-0.0.1.tar.zst \
     --set LEAPFROGAI_BASE_URL="<url>" \
     --set DOMAIN="<domain>" \
+    --set SUMMARIZATION_MODEL="<model_name>" \
     -l=debug \
     --confirm
 ```

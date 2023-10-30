@@ -44,7 +44,7 @@ export const actions = {
     }
     const { transcription } = formData;
 
-    const model = env.SUMMARIZATION_MODEL;
+    const model = env.SUMMARIZATION_MODEL || "ctransformers";
 
     const getSystemPrompt = (model: string, transcription: string) => {
       const systemBasePrompt =

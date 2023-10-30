@@ -4,8 +4,9 @@
 
 ## Dev
 
+Copy over the `.env.example` into a .env file, setting variables based on your local environment
+
 ```bash
-# set LEAPFROGAI_BASE_URL in .env first
 npm ci
 npm run dev --open
 ```

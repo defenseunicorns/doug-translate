@@ -21,7 +21,7 @@ export const actions = {
     const buf = Buffer.from(await audio.arrayBuffer());
     const stream = await toFile(buf);
 
-    const text = await openai.audio.transcriptions.create({ model: "whisper-1", file: stream }).then((res) => {
+    const text = await openai.audio.transcriptions.create({ model: "whisper", file: stream }).then((res) => {
       return res.text;
     });
 
@@ -43,7 +43,7 @@ export const actions = {
     }
     const { transcription } = formData;
 
-    const model = "mpt-7b-chat";
+    const model = "ctransformers";
 
     const getSystemPrompt = (model: string, transcription: string) => {
       const systemBasePrompt =
@@ -55,7 +55,7 @@ export const actions = {
         "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
         "original text.";
 
-      if (model === "mpt-7b-chat") {
+      if (model === "ctransformers") {
         return `<|im_start|>${systemBasePrompt}<|im_end|>
         <|im_start|>user ${transcription}<|im_end|>
         <|im_start|>assistant `;

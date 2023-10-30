@@ -27,6 +27,7 @@ components:
           - manifests/deploy.yaml
           - manifests/svc.yaml
           - manifests/istio.yaml
+          - manifests/namespace.yaml
     images:
       - defenseunicorns/doug-translate:0.0.1
     actions:

@@ -40,7 +40,6 @@ components:
         # before:
         #   - cmd: ./zarf tools wait-for https ${ZARF_VAR_LEAPFROGAI_BASE_URL} success
         after:
-          - cmd: ./zarf tools kubectl label namespace doug-translate istio-injection=enabled
           - wait:
               cluster:
                 kind: Deployment

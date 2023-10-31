@@ -21,7 +21,7 @@ export const actions = {
     const buf = Buffer.from(await audio.arrayBuffer());
     const stream = await toFile(buf);
 
-    const text = await openai.audio.transcriptions.create({ model: "whisper-1", file: stream }).then((res) => {
+    const text = await openai.audio.transcriptions.create({ model: "whisper", file: stream }).then((res) => {
       return res.text;
     });
 

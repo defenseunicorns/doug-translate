@@ -36,10 +36,6 @@ jobs:
           download-init-package: true
       - name: Zarf Init
         run: zarf init --confirm -l=trace --no-progress
-      - name: Deploy Dos-Games
-        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --no-progress --oci-concurrency=5 --key https://zarf.dev/cosign.pub
-      - name: List Packages
-        run: zarf package list
       - name: Use Node.js 20
         uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4.0.0
         with:

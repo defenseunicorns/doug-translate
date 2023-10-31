@@ -57,7 +57,7 @@ export const actions = {
         "original text.";
 
       if (model === "ctransformers" || model === "mpt-7b-chat") {
-        return `<|im_start|>${systemBasePrompt}<|im_end|>
+        return `<|im_start|>system ${systemBasePrompt}<|im_end|>
         <|im_start|>user ${transcription}<|im_end|>
         <|im_start|>assistant `;
       }

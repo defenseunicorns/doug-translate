@@ -16,6 +16,11 @@ variables:
     default: bigbang.dev
     prompt: true
     sensitive: true
+  - name: SUMMARIZATION_MODEL
+    description: The LLM to use for transcript summarization
+    default: ctransformers
+    prompt: true
+    sensitive: false
 
 components:
   - name: translate-ui
@@ -27,6 +32,7 @@ components:
           - manifests/deploy.yaml
           - manifests/svc.yaml
           - manifests/istio.yaml
+          - manifests/namespace.yaml
     images:
       - defenseunicorns/doug-translate:0.0.1
     actions:
@@ -34,7 +40,6 @@ components:
         # before:
         #   - cmd: ./zarf tools wait-for https ${ZARF_VAR_LEAPFROGAI_BASE_URL} success
         after:
-          - cmd: ./zarf tools kubectl label namespace doug-translate istio-injection=enabled
           - wait:
               cluster:
                 kind: Deployment

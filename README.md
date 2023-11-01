@@ -4,8 +4,9 @@
 
 ## Dev
 
+Copy over the `.env.example` into a .env file, setting variables based on your local environment
+
 ```bash
-# set LEAPFROGAI_BASE_URL in .env first
 npm ci
 npm run dev --open
 ```
@@ -32,10 +33,13 @@ docker build . -t defenseunicorns/doug-translate:0.0.1
 
 zarf package create -o pkgs --confirm
 
+# <url>, <model_name> and <domain> are optional
+# defaults for these values are located in the zarf.yaml
 zarf package deploy \
     pkgs/zarf-package-doug-translate-amd64-0.0.1.tar.zst \
     --set LEAPFROGAI_BASE_URL="<url>" \
     --set DOMAIN="<domain>" \
+    --set SUMMARIZATION_MODEL="<model_name>" \
     -l=debug \
     --confirm
 ```

@@ -46,3 +46,4 @@ components:
                 name: doug-translate
                 namespace: doug-translate
                 condition: Available
+

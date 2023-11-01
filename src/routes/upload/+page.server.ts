@@ -1,35 +1,41 @@
 import type { Actions, RequestEvent } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
-import { toFile } from "openai";
 import { env } from "$env/dynamic/private";
 
 export const actions = {
   upload: async ({ request }: RequestEvent) => {
     const formData = await request.formData();
 
-    const audio = formData.get("audioUpload") as File;
+    const audioFile = formData.get("audioUpload") as File;
 
-    if (audio === undefined) {
+    if (!audioFile) {
       return fail(400, {
         error: true,
         message: "You must provide a file to upload",
       });
     }
 
-    console.log(audio);
+    console.log(
+      `Now processing ${audioFile.name} (${audioFile.type}) of size ${audioFile.size}.`
+    );
 
-    const buf = Buffer.from(await audio.arrayBuffer());
-    const stream = await toFile(buf);
-
-    const text = await openai.audio.transcriptions.create({ model: "whisper", file: stream }).then((res) => {
-      return res.text;
-    });
+    const text = await openai.audio.transcriptions
+      .create({ model: "whisper", file: audioFile })
+      .then((res) => {
+        return res.text;
+      })
+      .catch((error) => {
+        return fail(400, {
+          error: true,
+          message: error.message.toString(),
+        });
+      });
 
     return {
       upload: {
         transcription: text,
-        filename: audio.name,
+        filename: audioFile.name,
         success: true,
       },
     };
@@ -39,7 +45,8 @@ export const actions = {
     if (formData.transcription === undefined) {
       return fail(400, {
         error: true,
-        message: "Something unexpected happened, the transcription is unavailable",
+        message:
+          "Something unexpected happened, the transcription is unavailable",
       });
     }
     const { transcription } = formData;
@@ -82,7 +89,9 @@ export const actions = {
 
     const assistantResponseToken = "<|ASSISTANT|>";
 
-    const summary = tokenizedResp.substring(tokenizedResp.indexOf(assistantResponseToken)).replace(assistantResponseToken, "");
+    const summary = tokenizedResp
+      .substring(tokenizedResp.indexOf(assistantResponseToken))
+      .replace(assistantResponseToken, "");
 
     return {
       upload: {

@@ -2,6 +2,7 @@ import type { Actions, RequestEvent } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
 import { toFile } from "openai";
+import { env } from "$env/dynamic/private";
 
 export const actions = {
   upload: async ({ request }: RequestEvent) => {
@@ -43,7 +44,7 @@ export const actions = {
     }
     const { transcription } = formData;
 
-    const model = "mpt-7b-chat";
+    const model = env.SUMMARIZATION_MODEL || "ctransformers";
 
     const getSystemPrompt = (model: string, transcription: string) => {
       const systemBasePrompt =
@@ -55,8 +56,8 @@ export const actions = {
         "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
         "original text.";
 
-      if (model === "mpt-7b-chat") {
-        return `<|im_start|>${systemBasePrompt}<|im_end|>
+      if (model === "ctransformers" || model === "mpt-7b-chat") {
+        return `<|im_start|>system ${systemBasePrompt}<|im_end|>
         <|im_start|>user ${transcription}<|im_end|>
         <|im_start|>assistant `;
       }

@@ -32,6 +32,6 @@
   "dependencies": {
     "@fontsource/pt-mono": "^5.0.2",
     "@fontsource/pt-sans": "^5.0.8",
-    "openai": "^4.14.0"
+    "openai": "^4.14.2"
   }
 }

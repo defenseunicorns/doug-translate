@@ -35,9 +35,9 @@ jobs:
         with:
           download-init-package: true
       - name: Zarf Init
-        run: zarf init --confirm -l=trace --no-progress
+        run: zarf init --confirm -l=trace
       - name: Deploy Dos-Games
-        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --no-progress --oci-concurrency=5 --key https://zarf.dev/cosign.pub
+        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --oci-concurrency=5 --key https://zarf.dev/cosign.pub
       - name: List Packages
         run: zarf package list
       - name: Use Node.js 20
@@ -45,7 +45,6 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: mkdir -p pkgs
       - run: ./hack/build.sh
       - run: ./hack/deploy-amd64.sh "leapfrog.du.dev" "du.dev" "ctransformers" # dummy env vars
       - run: zarf package inspect doug-translate

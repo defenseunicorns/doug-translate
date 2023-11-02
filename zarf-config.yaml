@@ -1,7 +1,0 @@
-log_level: info
-package:
-    oci_concurrency: 5
-    create:
-        set:
-            istio_version: 1.19.3
-zarf_cache: ~/.zarf-cache

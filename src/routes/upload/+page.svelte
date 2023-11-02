@@ -35,7 +35,7 @@
   $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
 
   $: transcript = form?.upload?.transcript;
-  $: fileinfo = form?.upload?.path;
+  $: name = form?.upload?.name;
   $: summary = form?.summarize?.summary;
 </script>
 
@@ -63,7 +63,7 @@
     }}
   >
     <h3 class="font-bold text-lg">Uh Oh!</h3>
-    <p class="py-4">{err}</p>
+    <p class="py-4">{err?.message}</p>
     <div class="modal-action">
       <button class="btn">Close</button>
     </div>
@@ -131,12 +131,12 @@
         {/if}
         {#if selectedTab === "transcript"}
           <div class="w-full flex justify-end">
-            <DownloadText title="Download Transcript" content={transcript} fileOptions={{ suggestedName: fileinfo.name + "-transcript.txt" }} />
+            <DownloadText title="Download Transcript" content={String(transcript)} name={name + "-transcript.txt"} />
           </div>
           {transcript}
         {:else if selectedTab === "summary" && summary}
           <div class="w-full flex justify-end">
-            <DownloadText title="Download Summary" content={summary} fileOptions={{ suggestedName: fileinfo.name + "-summary.txt" }} />
+            <DownloadText title="Download Summary" content={summary} name={name + "-summary.txt"} />
           </div>
           {summary}
         {:else}
@@ -157,7 +157,8 @@
             };
           }}
         >
-          <input type="hidden" name="transcript" value={form?.upload?.transcript} />
+          <input type="hidden" name="name" value={name} />
+          <input type="hidden" name="transcription" value={transcript} />
           <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-8">Summarize?</button>
         </form>
       {/if}

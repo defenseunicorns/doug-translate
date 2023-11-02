@@ -30,7 +30,7 @@ export const actions = {
     return {
       upload: {
         transcript: text,
-        path: path.parse(audio.name),
+        name: path.parse(audio.name).name,
         success: true,
       },
     };
@@ -38,7 +38,9 @@ export const actions = {
   summarize: async ({ request }: RequestEvent) => {
     const formData = await request.formData();
 
-    const transcript = formData.get("transcript");
+    const transcript = formData.get("transcription") as string;
+
+    const name = formData.get("name") as string;
 
     if (transcript === undefined) {
       return fail(400, {
@@ -90,6 +92,7 @@ export const actions = {
     return {
       upload: {
         transcript,
+        name,
         success: true,
       },
       summarize: {

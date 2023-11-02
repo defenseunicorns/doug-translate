@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
+  import DownloadText from "$lib/components/DownloadText.svelte";
   import { slide, fly } from "svelte/transition";
   export let form;
 
@@ -13,7 +14,7 @@
 
   let selectedTab = "transcription";
 
-  let errmessage = "";
+  let err: Error | null = null;
 
   const autorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
   let filename = "";
@@ -24,16 +25,18 @@
     if (!file) return;
     // this is from BODY_SIZE_LIMIT in the dockerfile
     if (file.size > 65540000) {
-      errmessage = "File size must be less than 500MB";
+      err = new Error("File size must be less than 500MB");
       dialogRef.showModal();
     }
     filename = file.name;
   };
 
-  $: console.log(form);
-
   $: showTranscription = !uploading && form && form.upload && form.upload.success;
   $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
+
+  $: transcription = form?.upload?.transcription;
+  $: fileinfo = form?.upload?.path;
+  $: summary = form?.summarize?.summary;
 </script>
 
 <svelte:head>
@@ -47,7 +50,7 @@
   on:keydown={(event) => {
     if (event.key === "Escape") {
       formRef.reset();
-      errmessage = "";
+      err = null;
     }
   }}
 >
@@ -56,11 +59,11 @@
     class="modal-box"
     on:submit={() => {
       formRef.reset();
-      errmessage = "";
+      err = null;
     }}
   >
     <h3 class="font-bold text-lg">Uh Oh!</h3>
-    <p class="py-4">{errmessage}</p>
+    <p class="py-4">{err}</p>
     <div class="modal-action">
       <button class="btn">Close</button>
     </div>
@@ -126,7 +129,19 @@
           <progress class="progress w-56" />
           <progress class="progress w-56" />
         {/if}
-        {selectedTab === "transcription" ? form?.upload?.transcription : form?.summarize?.summary ? form.summarize.summary : ""}
+        {#if selectedTab === "transcription"}
+          <div class="w-full flex justify-end">
+            <DownloadText title="Download Transcript" content={transcription} fileOptions={{ suggestedName: fileinfo.name + "-transcription.txt" }} />
+          </div>
+          {transcription}
+        {:else if selectedTab === "summary" && summary}
+          <div class="w-full flex justify-end">
+            <DownloadText title="Download Summary" content={summary} fileOptions={{ suggestedName: fileinfo.name + "-summary.txt" }} />
+          </div>
+          {summary}
+        {:else}
+          {""}
+        {/if}
       </div>
 
       {#if showTranscription && !showSummary}

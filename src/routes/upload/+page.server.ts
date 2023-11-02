@@ -3,6 +3,7 @@ import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
 import { toFile } from "openai";
 import { env } from "$env/dynamic/private";
+import path from "node:path";
 
 export const actions = {
   upload: async ({ request }: RequestEvent) => {
@@ -17,7 +18,7 @@ export const actions = {
       });
     }
 
-    console.log(audio);
+    console.log("processsing audio file: ", audio.name);
 
     const buf = Buffer.from(await audio.arrayBuffer());
     const stream = await toFile(buf);
@@ -29,20 +30,22 @@ export const actions = {
     return {
       upload: {
         transcription: text,
-        filename: audio.name,
+        path: path.parse(audio.name),
         success: true,
       },
     };
   },
   summarize: async ({ request }: RequestEvent) => {
-    const formData = Object.fromEntries(await request.formData());
-    if (formData.transcription === undefined) {
+    const formData = await request.formData();
+
+    const transcription = formData.get("transcription");
+
+    if (transcription === undefined) {
       return fail(400, {
         error: true,
-        message: "Something unexpected happened, the transcription is unavailable",
+        message: "Something unexpected happened, transcription is undefined",
       });
     }
-    const { transcription } = formData;
 
     const model = env.SUMMARIZATION_MODEL || "ctransformers";
 
@@ -77,8 +80,6 @@ export const actions = {
       prompt,
     });
     const tokenizedResp = completion.choices[0].text;
-
-    console.log(tokenizedResp);
 
     const assistantResponseToken = "<|ASSISTANT|>";
 

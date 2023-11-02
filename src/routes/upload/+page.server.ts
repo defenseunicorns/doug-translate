@@ -1,6 +1,7 @@
 import type { Actions, RequestEvent } from "./$types";
 import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
+import { toFile } from "openai";
 import { env } from "$env/dynamic/private";
 
 export const actions = {
@@ -17,13 +18,23 @@ export const actions = {
     }
 
     console.log(
-      `Now processing ${audioFile.name} (${audioFile.type}) of size ${audioFile.size}.`
+      `Now processing ${audioFile.name} (${audioFile.type}) of size ${
+        audioFile.size / 1000000
+      }MB.`
     );
 
+    const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
+    const audioStream = await toFile(audioBuffer);
+
     const text = await openai.audio.transcriptions
-      .create({ model: "whisper", file: audioFile })
+      .create({ model: "whisper", file: audioStream })
       .then((res) => {
-        return res.text;
+        const transcription = res.text;
+        console.log(
+          `\nTranscription Length: ${transcription.length} characters\n` +
+            `\nTranscription Text: ${transcription}\n`
+        );
+        return transcription;
       })
       .catch((error) => {
         return fail(400, {

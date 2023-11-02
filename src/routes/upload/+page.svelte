@@ -12,7 +12,7 @@
   let formRef: HTMLFormElement;
   let dialogRef: HTMLDialogElement;
 
-  let selectedTab = "transcription";
+  let selectedTab = "transcript";
 
   let err: Error | null = null;
 
@@ -31,10 +31,10 @@
     filename = file.name;
   };
 
-  $: showTranscription = !uploading && form && form.upload && form.upload.success;
+  $: showTranscript = !uploading && form && form.upload && form.upload.success;
   $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
 
-  $: transcription = form?.upload?.transcription;
+  $: transcript = form?.upload?.transcript;
   $: fileinfo = form?.upload?.path;
   $: summary = form?.summarize?.summary;
 </script>
@@ -107,7 +107,7 @@
     </form>
   </section>
 
-  {#if showTranscription}
+  {#if showTranscript}
     <section in:slide class="prose max-w-none py-3">
       <code>Transcription took {(Date.now() - timerStart) / 1000} seconds</code>
       <blockquote>"{filename}"</blockquote>
@@ -115,8 +115,8 @@
       {#if showSummary || summarizing}
         <div class="flex w-full m-auto justify-center">
           <div class="tabs tabs-boxed">
-            <button on:click={() => (selectedTab = "transcription")} class={`tab text-lg ${selectedTab === "transcription" ? "tab-active" : ""}`}
-              >Transcription</button
+            <button on:click={() => (selectedTab = "transcript")} class={`tab text-lg ${selectedTab === "transcript" ? "tab-active" : ""}`}
+              >Transcript</button
             >
             <button on:click={() => (selectedTab = "summary")} class={`tab text-lg ${selectedTab === "summary" ? "tab-active" : ""}`}>Summary</button>
           </div>
@@ -129,11 +129,11 @@
           <progress class="progress w-56" />
           <progress class="progress w-56" />
         {/if}
-        {#if selectedTab === "transcription"}
+        {#if selectedTab === "transcript"}
           <div class="w-full flex justify-end">
-            <DownloadText title="Download Transcript" content={transcription} fileOptions={{ suggestedName: fileinfo.name + "-transcription.txt" }} />
+            <DownloadText title="Download Transcript" content={transcript} fileOptions={{ suggestedName: fileinfo.name + "-transcript.txt" }} />
           </div>
-          {transcription}
+          {transcript}
         {:else if selectedTab === "summary" && summary}
           <div class="w-full flex justify-end">
             <DownloadText title="Download Summary" content={summary} fileOptions={{ suggestedName: fileinfo.name + "-summary.txt" }} />
@@ -144,7 +144,7 @@
         {/if}
       </div>
 
-      {#if showTranscription && !showSummary}
+      {#if showTranscript && !showSummary}
         <form
           in:fly
           method="POST"
@@ -157,7 +157,7 @@
             };
           }}
         >
-          <input type="hidden" name="transcription" value={form?.upload?.transcription} />
+          <input type="hidden" name="transcript" value={form?.upload?.transcript} />
           <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-8">Summarize?</button>
         </form>
       {/if}

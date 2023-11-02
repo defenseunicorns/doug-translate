@@ -29,7 +29,7 @@ export const actions = {
 
     return {
       upload: {
-        transcription: text,
+        transcript: text,
         path: path.parse(audio.name),
         success: true,
       },
@@ -38,18 +38,18 @@ export const actions = {
   summarize: async ({ request }: RequestEvent) => {
     const formData = await request.formData();
 
-    const transcription = formData.get("transcription");
+    const transcript = formData.get("transcript");
 
-    if (transcription === undefined) {
+    if (transcript === undefined) {
       return fail(400, {
         error: true,
-        message: "Something unexpected happened, transcription is undefined",
+        message: "Something unexpected happened transcript is undefined",
       });
     }
 
     const model = env.SUMMARIZATION_MODEL || "ctransformers";
 
-    const getSystemPrompt = (model: string, transcription: string) => {
+    const getSystemPrompt = (model: string, transcript: string) => {
       const systemBasePrompt =
         "You are a summarizer tasked with creating summaries." +
         "Your key activities include identifying the main points and key details in the given text, " +
@@ -61,14 +61,14 @@ export const actions = {
 
       if (model === "ctransformers" || model === "mpt-7b-chat") {
         return `<|im_start|>system ${systemBasePrompt}<|im_end|>
-        <|im_start|>user ${transcription}<|im_end|>
+        <|im_start|>user ${transcript}<|im_end|>
         <|im_start|>assistant `;
       }
 
-      return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcription}<|ASSISTANT|>`;
+      return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcript}<|ASSISTANT|>`;
     };
 
-    const prompt = getSystemPrompt(model, transcription as string);
+    const prompt = getSystemPrompt(model, transcript as string);
 
     const completion = await openai.completions.create({
       model: model,
@@ -87,7 +87,7 @@ export const actions = {
 
     return {
       upload: {
-        transcription,
+        transcript,
         success: true,
       },
       summarize: {

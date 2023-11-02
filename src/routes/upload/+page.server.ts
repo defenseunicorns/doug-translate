@@ -18,7 +18,7 @@ export const actions = {
       });
     }
 
-    console.log("processsing audio file: ", audio.name);
+    console.log("processsing audio file: ", audio);
 
     const buf = Buffer.from(await audio.arrayBuffer());
     const stream = await toFile(buf);
@@ -47,29 +47,31 @@ export const actions = {
       });
     }
 
+    console.log("processsing transcript: ", transcript?.slice(0, 20), "...");
+
     const model = env.SUMMARIZATION_MODEL || "ctransformers";
 
-    const getSystemPrompt = (model: string, transcript: string) => {
-      const systemBasePrompt =
-        "You are a summarizer tasked with creating summaries." +
-        "Your key activities include identifying the main points and key details in the given text, " +
-        "and condensing the information into a concise summary that accurately reflects the original text. " +
-        "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
-        "or distorting the original meaning. Use clear and specific language, " +
-        "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
-        "original text.";
+    const base =
+      "You are a summarizer tasked with creating summaries." +
+      "Your key activities include identifying the main points and key details in the given text, " +
+      "and condensing the information into a concise summary that accurately reflects the original text. " +
+      "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
+      "or distorting the original meaning. Use clear and specific language, " +
+      "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
+      "original text.";
 
-      if (model === "ctransformers" || model === "mpt-7b-chat") {
-        return `<|im_start|>system ${systemBasePrompt}<|im_end|>
+    let prompt = "";
+
+    switch (model) {
+      case "mpt-7b-chat":
+      case "ctransformers":
+        prompt = `<|im_start|>system ${base}<|im_end|>
         <|im_start|>user ${transcript}<|im_end|>
         <|im_start|>assistant `;
-      }
-
-      return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcript}<|ASSISTANT|>`;
-    };
-
-    const prompt = getSystemPrompt(model, transcript as string);
-
+        break;
+      default:
+        prompt = `<|SYSTEM|>${base}<|USER|>${transcript}<|ASSISTANT|>`;
+    }
     const completion = await openai.completions.create({
       model: model,
       max_tokens: 500,

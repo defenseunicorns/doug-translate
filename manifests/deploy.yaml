@@ -24,8 +24,8 @@ spec:
               value: "https://###ZARF_VAR_DOMAIN###"
           resources:
             requests:
-              memory: "64Mi"
+              memory: "500Mi"
               cpu: "500m"
             limits:
-              memory: "128Mi"
+              memory: "800Mi"
               cpu: "1000m"

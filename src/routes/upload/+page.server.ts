@@ -8,28 +8,45 @@ export const actions = {
   upload: async ({ request }: RequestEvent) => {
     const formData = await request.formData();
 
-    const audio = formData.get("audioUpload") as File;
+    const audioFile = formData.get("audioUpload") as File;
 
-    if (audio === undefined) {
+    if (!audioFile) {
       return fail(400, {
         error: true,
         message: "You must provide a file to upload",
       });
     }
 
-    console.log(audio);
+    console.log(
+      `Now processing ${audioFile.name} (${audioFile.type}) of size ${
+        audioFile.size / 1000000
+      }MB.`
+    );
 
-    const buf = Buffer.from(await audio.arrayBuffer());
-    const stream = await toFile(buf);
+    const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
+    const audioStream = await toFile(audioBuffer);
 
-    const text = await openai.audio.transcriptions.create({ model: "whisper", file: stream }).then((res) => {
-      return res.text;
-    });
+    const text = await openai.audio.transcriptions
+      .create({ model: "whisper", file: audioStream })
+      .then((res) => {
+        const transcription = res.text;
+        console.log(
+          `\nTranscription Length: ${transcription.length} characters\n` +
+            `\nTranscription Text: ${transcription}\n`
+        );
+        return transcription;
+      })
+      .catch((error) => {
+        return fail(400, {
+          error: true,
+          message: error.message.toString(),
+        });
+      });
 
     return {
       upload: {
         transcription: text,
-        filename: audio.name,
+        filename: audioFile.name,
         success: true,
       },
     };
@@ -39,7 +56,8 @@ export const actions = {
     if (formData.transcription === undefined) {
       return fail(400, {
         error: true,
-        message: "Something unexpected happened, the transcription is unavailable",
+        message:
+          "Something unexpected happened, the transcription is unavailable",
       });
     }
     const { transcription } = formData;
@@ -82,7 +100,9 @@ export const actions = {
 
     const assistantResponseToken = "<|ASSISTANT|>";
 
-    const summary = tokenizedResp.substring(tokenizedResp.indexOf(assistantResponseToken)).replace(assistantResponseToken, "");
+    const summary = tokenizedResp
+      .substring(tokenizedResp.indexOf(assistantResponseToken))
+      .replace(assistantResponseToken, "");
 
     return {
       upload: {

@@ -31,8 +31,11 @@
     filename = file.name;
   };
 
-  $: showTranscript = !uploading && form && form.upload && form.upload.success;
-  $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
+  // $: showTranscript = !uploading && form && form.upload && form.upload.success;
+  // $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
+
+  $: showTranscript = true;
+  $: showSummary = true;
 
   $: transcript = form?.upload?.transcript;
   $: name = form?.upload?.name;
@@ -102,7 +105,15 @@
           class="file-input file-input-accent file-input-lg w-full"
           on:input={upload}
         />
-        <button disabled={uploading} on:click={() => (timerStart = Date.now())} type="submit" class="btn btn-primary h-auto">Upload</button>
+        <button disabled={uploading} on:click={() => (timerStart = Date.now())} type="submit" class="btn btn-primary btn-outline h-auto"
+          >Upload <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+            />
+          </svg>
+        </button>
       </div>
     </form>
   </section>

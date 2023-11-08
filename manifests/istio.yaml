@@ -4,6 +4,7 @@ metadata:
   name: doug-translate
 spec:
   gateways:
+    - istio-system/leapfrogai
     - istio-system/tenant
   hosts:
     - "*"

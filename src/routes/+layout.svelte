@@ -2,6 +2,7 @@
   import "../app.css";
   import "@fontsource/pt-sans";
   import "@fontsource/pt-mono";
+  import ThemeSwitcher from "$lib/components/theme-switcher.svelte";
 </script>
 
 <nav class="navbar bg-base-100 fixed backdrop-blur-md bg-transparent">
@@ -12,6 +13,8 @@
     <ul class="menu menu-horizontal px-1">
       <li><a href="/models">Models</a></li>
       <li><a href="/upload">Upload</a></li>
+      <li><a href="/help">Help</a></li>
+      <li><ThemeSwitcher /></li>
     </ul>
   </div>
 </nav>
@@ -20,3 +23,8 @@
     <slot />
   </div>
 </main>
+<footer class="fixed bottom-0 footer footer-center p-4 bg-base-300 text-base-content">
+  <aside>
+    <p>Copyright © 2023 - All right reserved by Defense Unicorns</p>
+  </aside>
+</footer>

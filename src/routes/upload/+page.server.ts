@@ -3,6 +3,7 @@ import { fail } from "@sveltejs/kit";
 import { openai } from "$lib/openai";
 import { toFile } from "openai";
 import { env } from "$env/dynamic/private";
+import path from "node:path";
 
 export const actions = {
   upload: async ({ request }: RequestEvent) => {
@@ -45,46 +46,51 @@ export const actions = {
 
     return {
       upload: {
-        transcription: text,
-        filename: audioFile.name,
+        transcript: text,
+        name: path.parse(audioFile.name).name,
         success: true,
       },
     };
   },
   summarize: async ({ request }: RequestEvent) => {
-    const formData = Object.fromEntries(await request.formData());
-    if (formData.transcription === undefined) {
+    const formData = await request.formData();
+
+    const transcript = formData.get("transcription") as string;
+
+    const name = formData.get("name") as string;
+
+    if (transcript === undefined) {
       return fail(400, {
         error: true,
-        message:
-          "Something unexpected happened, the transcription is unavailable",
+        message: "Something unexpected happened, transcript is undefined",
       });
     }
-    const { transcription } = formData;
+
+    console.log("processsing transcript: ", transcript?.slice(0, 20), "...");
 
     const model = env.SUMMARIZATION_MODEL || "ctransformers";
 
-    const getSystemPrompt = (model: string, transcription: string) => {
-      const systemBasePrompt =
-        "You are a summarizer tasked with creating summaries." +
-        "Your key activities include identifying the main points and key details in the given text, " +
-        "and condensing the information into a concise summary that accurately reflects the original text. " +
-        "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
-        "or distorting the original meaning. Use clear and specific language, " +
-        "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
-        "original text.";
+    const base =
+      "You are a summarizer tasked with creating summaries." +
+      "Your key activities include identifying the main points and key details in the given text, " +
+      "and condensing the information into a concise summary that accurately reflects the original text. " +
+      "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
+      "or distorting the original meaning. Use clear and specific language, " +
+      "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
+      "original text.";
 
-      if (model === "ctransformers" || model === "mpt-7b-chat") {
-        return `<|im_start|>system ${systemBasePrompt}<|im_end|>
-        <|im_start|>user ${transcription}<|im_end|>
+    let prompt = "";
+
+    switch (model) {
+      case "mpt-7b-chat":
+      case "ctransformers":
+        prompt = `<|im_start|>system ${base}<|im_end|>
+        <|im_start|>user ${transcript}<|im_end|>
         <|im_start|>assistant `;
-      }
-
-      return `<|SYSTEM|>${systemBasePrompt}<|USER|>${transcription}<|ASSISTANT|>`;
-    };
-
-    const prompt = getSystemPrompt(model, transcription as string);
-
+        break;
+      default:
+        prompt = `<|SYSTEM|>${base}<|USER|>${transcript}<|ASSISTANT|>`;
+    }
     const completion = await openai.completions.create({
       model: model,
       max_tokens: 500,
@@ -96,8 +102,6 @@ export const actions = {
     });
     const tokenizedResp = completion.choices[0].text;
 
-    console.log(tokenizedResp);
-
     const assistantResponseToken = "<|ASSISTANT|>";
 
     const summary = tokenizedResp
@@ -106,7 +110,8 @@ export const actions = {
 
     return {
       upload: {
-        transcription,
+        transcript,
+        name,
         success: true,
       },
       summarize: {

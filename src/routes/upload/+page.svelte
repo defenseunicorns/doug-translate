@@ -31,11 +31,8 @@
     filename = file.name;
   };
 
-  // $: showTranscript = !uploading && form && form.upload && form.upload.success;
-  // $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
-
-  $: showTranscript = true;
-  $: showSummary = true;
+  $: showTranscript = !uploading && form && form.upload && form.upload.success;
+  $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
 
   $: transcript = form?.upload?.transcript;
   $: name = form?.upload?.name;

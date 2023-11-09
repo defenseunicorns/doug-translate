@@ -1,6 +1,6 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import DownloadText from "$lib/components/DownloadText.svelte";
+  import DownloadText from "$lib/components/download-text.svelte";
   import { slide, fly } from "svelte/transition";
   export let form;
 

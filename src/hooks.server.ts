@@ -10,6 +10,6 @@ export const handle = async ({ event, resolve }) => {
   return await resolve(event, {
     transformPageChunk: ({ html }) => {
       return html.replace('data-theme=""', `data-theme="${theme}"`);
-    },
+    }
   });
 };

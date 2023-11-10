@@ -99,7 +99,7 @@
           accept={autorizedExtensions.join(",")}
           required
           type="file"
-          class="file-input file-input-accent file-input-lg w-full"
+          class="file-input file-input-primary file-input-lg w-full"
           on:input={upload}
         />
         <button disabled={uploading} on:click={() => (timerStart = Date.now())} type="submit" class="btn btn-primary btn-outline h-auto"
@@ -131,7 +131,7 @@
         </div>
       {/if}
 
-      <div class="p-3 bg-stone-900 rounded-lg my-4">
+      <div class="p-3 bg-base-100 rounded-lg my-4">
         {#if summarizing}
           <progress class="progress w-56" />
           <progress class="progress w-56" />
@@ -167,7 +167,7 @@
         >
           <input type="hidden" name="name" value={name} />
           <input type="hidden" name="transcription" value={transcript} />
-          <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-8">Summarize?</button>
+          <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-info btn mr-8 mb-20">Summarize?</button>
         </form>
       {/if}
     </section>

@@ -14,14 +14,12 @@ export const actions = {
     if (!audioFile) {
       return fail(400, {
         error: true,
-        message: "You must provide a file to upload",
+        message: "You must provide a file to upload"
       });
     }
 
     console.log(
-      `Now processing ${audioFile.name} (${audioFile.type}) of size ${
-        audioFile.size / 1000000
-      }MB.`
+      `Now processing ${audioFile.name} (${audioFile.type}) of size ${audioFile.size / 1000000}MB.`
     );
 
     const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
@@ -40,7 +38,7 @@ export const actions = {
       .catch((error) => {
         return fail(400, {
           error: true,
-          message: error.message.toString(),
+          message: error.message.toString()
         });
       });
 
@@ -48,8 +46,8 @@ export const actions = {
       upload: {
         transcript: text,
         name: path.parse(audioFile.name).name,
-        success: true,
-      },
+        success: true
+      }
     };
   },
   summarize: async ({ request }: RequestEvent) => {
@@ -62,7 +60,7 @@ export const actions = {
     if (transcript === undefined) {
       return fail(400, {
         error: true,
-        message: "Something unexpected happened, transcript is undefined",
+        message: "Something unexpected happened, transcript is undefined"
       });
     }
 
@@ -98,7 +96,7 @@ export const actions = {
       top_p: 1.0,
       frequency_penalty: 0.5,
       presence_penalty: 0.0,
-      prompt,
+      prompt
     });
     const tokenizedResp = completion.choices[0].text;
 
@@ -112,12 +110,12 @@ export const actions = {
       upload: {
         transcript,
         name,
-        success: true,
+        success: true
       },
       summarize: {
         success: true,
-        summary,
-      },
+        summary
+      }
     };
-  },
+  }
 } satisfies Actions;

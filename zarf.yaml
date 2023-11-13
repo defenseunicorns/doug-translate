@@ -1,7 +1,7 @@
 kind: ZarfPackageConfig
 metadata:
   name: doug-translate
-  version: 0.0.1
+  version: 0.1.0
   description: >
     Translate, transcribe, and summarize audio recordings using a self-hosted OpenAI API.
 
@@ -34,7 +34,7 @@ components:
           - manifests/istio.yaml
           - manifests/namespace.yaml
     images:
-      - defenseunicorns/doug-translate:0.0.1
+      - ghcr.io/defenseunicorns/doug-translate:0.1.0
     actions:
       onDeploy:
         # before:

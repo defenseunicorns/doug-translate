@@ -15,8 +15,8 @@ COPY --chown=node:node --from=builder /app/node_modules node_modules/
 COPY --chown=node:node package.json .
 EXPOSE 3000
 ENV NODE_ENV=production
-# 500MB request size limit
-ENV BODY_SIZE_LIMIT=65540000
+# Disable request size limit
+ENV BODY_SIZE_LIMIT=0
 ENV PROTOCOL_HEADER=x-forwarded-proto 
 ENV HOST_HEADER=x-forwarded-host
 CMD ["build"]

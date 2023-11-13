@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: doug-translate
-          image: defenseunicorns/doug-translate:0.0.1
+          image: ghcr.io/defenseunicorns/doug-translate:0.1.0
           ports:
             - containerPort: 3000
           env:
@@ -24,8 +24,8 @@ spec:
               value: "https://###ZARF_VAR_DOMAIN###"
           resources:
             requests:
-              memory: "1Gi"
+              memory: "5Gi"
               cpu: "500m"
             limits:
-              memory: "1.5Gi"
+              memory: "5Gi"
               cpu: "1000m"

@@ -1,12 +1,23 @@
 import type { Actions, RequestEvent } from "./$types";
 import { fail } from "@sveltejs/kit";
-import { openai } from "$lib/openai";
+import { tmpdir } from "os";
 import { toFile } from "openai";
-import { env } from "$env/dynamic/private";
+import { writeFile, readFile, unlink } from "fs/promises";
+import { v4 as uuidv4 } from "uuid";
 import path from "node:path";
+
+import { completion, openai } from "$lib/openai";
+import { env } from "$env/dynamic/private";
+import { batchTranscript, tokenize } from "$lib/tokenizer";
+import { generateSummarizationPrompt } from "$lib/prompt";
+import { clearTmp } from "$lib/cleanup";
+
+const TEMPORARY_DIRECTORY = tmpdir();
 
 export const actions = {
   upload: async ({ request }: RequestEvent) => {
+    clearTmp(TEMPORARY_DIRECTORY);
+
     const formData = await request.formData();
 
     const audioFile = formData.get("audioUpload") as File;
@@ -18,22 +29,29 @@ export const actions = {
       });
     }
 
+    const filename = audioFile.name;
+    const uid = uuidv4();
+
     console.log(
-      `Now processing ${audioFile.name} (${audioFile.type}) of size ${audioFile.size / 1000000}MB.`
+      `Started new workflow for ${filename} (${audioFile.type}) of size ${audioFile.size / 1000000}MB.`
     );
 
     const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
     const audioStream = await toFile(audioBuffer);
 
-    const text = await openai.audio.transcriptions
+    openai.audio.transcriptions
       .create({ model: "whisper", file: audioStream })
-      .then((res) => {
-        const transcription = res.text;
-        console.log(
-          `\nTranscription Length: ${transcription.length} characters\n` +
-            `\nTranscription Text: ${transcription}\n`
+      .then(async (res) => {
+        console.log(`\tSuccessfully transcribed ${filename}`);
+
+        const transcriptionResult = res.text;
+
+        await writeFile(
+          `${TEMPORARY_DIRECTORY}/${uid}.txt`,
+          transcriptionResult
         );
-        return transcription;
+
+        return transcriptionResult;
       })
       .catch((error) => {
         return fail(400, {
@@ -44,78 +62,63 @@ export const actions = {
 
     return {
       upload: {
-        transcript: text,
+        filename: filename,
         name: path.parse(audioFile.name).name,
-        success: true
-      }
+        uid: uid,
+        success: true,
+      },
     };
   },
+
   summarize: async ({ request }: RequestEvent) => {
     const formData = await request.formData();
 
-    const transcript = formData.get("transcription") as string;
+    const uid = formData.get("uid") as File;
+    const filename = formData.get("filename") as File;
+    const transcriptionFile = path.join(TEMPORARY_DIRECTORY, `${uid}.txt`);
+    const transcription = await readFile(transcriptionFile, "utf8");
 
-    const name = formData.get("name") as string;
-
-    if (transcript === undefined) {
-      return fail(400, {
-        error: true,
-        message: "Something unexpected happened, transcript is undefined"
-      });
-    }
-
-    console.log("processsing transcript: ", transcript?.slice(0, 20), "...");
+    const tokenizedTranscript = tokenize(transcription as string);
 
     const model = env.SUMMARIZATION_MODEL || "ctransformers";
 
-    const base =
-      "You are a summarizer tasked with creating summaries." +
-      "Your key activities include identifying the main points and key details in the given text, " +
-      "and condensing the information into a concise summary that accurately reflects the original text. " +
-      "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
-      "or distorting the original meaning. Use clear and specific language, " +
-      "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
-      "original text.";
+    // batching method only occurs at high token counts
+    let intermediateSummary = "";
+    if (tokenizedTranscript.length > 7500) {
+      console.log(`\tUsing batching method for ${filename}`);
+      const transcriptBatches = batchTranscript(tokenizedTranscript, 1500);
 
-    let prompt = "";
-
-    switch (model) {
-      case "mpt-7b-chat":
-      case "ctransformers":
-        prompt = `<|im_start|>system ${base}<|im_end|>
-        <|im_start|>user ${transcript}<|im_end|>
-        <|im_start|>assistant `;
-        break;
-      default:
-        prompt = `<|SYSTEM|>${base}<|USER|>${transcript}<|ASSISTANT|>`;
+      for (let i = 0; i < transcriptBatches.length; i++) {
+        const chunk = transcriptBatches[i];
+        const prompt = generateSummarizationPrompt(model, chunk);
+        const text = await completion(model, prompt, 500);
+        intermediateSummary += text;
+      }
+    } else {
+      intermediateSummary = tokenizedTranscript.join(" ");
     }
-    const completion = await openai.completions.create({
-      model: model,
-      max_tokens: 500,
-      temperature: 0.5,
-      top_p: 1.0,
-      frequency_penalty: 0.5,
-      presence_penalty: 0.0,
-      prompt
-    });
-    const tokenizedResp = completion.choices[0].text;
 
-    const assistantResponseToken = "<|ASSISTANT|>";
+    const prompt = generateSummarizationPrompt(
+      model,
+      intermediateSummary,
+      true // finalSummary
+    );
+    const summary = await completion(model, prompt, 7500);
 
-    const summary = tokenizedResp
-      .substring(tokenizedResp.indexOf(assistantResponseToken))
-      .replace(assistantResponseToken, "");
+    await unlink(transcriptionFile);
+    console.log(`\tSuccessfully summarized ${filename}`);
 
     return {
       upload: {
-        transcript,
-        name,
-        success: true
+        transcription: transcription,
+        filename: filename,
+        uid: uid,
+        success: true,
       },
       summarize: {
+        summary,
         success: true,
-        summary
-      }
+      },
     };
   }
 } satisfies Actions;

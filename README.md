@@ -30,14 +30,14 @@ npm run dev --open
 3. Create `doug-translate`'s Zarf package and deploy it
 
 ```bash
-docker build . -t defenseunicorns/doug-translate:0.0.1
+docker build . -t ghcr.io/defenseunicorns/doug-translate:0.1.0
 
 zarf package create -o pkgs --confirm
 
 # <url>, <model_name> and <domain> are optional
 # defaults for these values are located in the zarf.yaml
 zarf package deploy \
-    pkgs/zarf-package-doug-translate-amd64-0.0.1.tar.zst \
+    pkgs/zarf-package-doug-translate-amd64-0.1.0.tar.zst \
     --set LEAPFROGAI_BASE_URL="<url>" \
     --set DOMAIN="<domain>" \
     --set SUMMARIZATION_MODEL="<model_name>" \

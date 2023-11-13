@@ -2,7 +2,7 @@ import type { RequestEvent } from "./$types";
 import { readFile } from "fs/promises";
 import { tmpdir } from "os";
 import path from "path";
-import { json } from "@sveltejs/kit"
+import { json } from "@sveltejs/kit";
 
 const TEMPORARY_DIRECTORY = tmpdir();
 
@@ -12,7 +12,7 @@ export async function POST({ request }: RequestEvent) {
   const uid: string | File | undefined = jsonData.uid;
 
   let response = json({
-    result: "Incomplete",
+    result: "Incomplete"
   });
 
   if (!uid || uid === "") {
@@ -36,9 +36,9 @@ export async function POST({ request }: RequestEvent) {
   }
 
   response = json({
-      result: "Complete",
-      transcription: transcription,
-    });
+    result: "Complete",
+    transcription: transcription
+  });
 
   return response;
 }

@@ -6,19 +6,14 @@ export const tokenize = (text: string): string[] => {
   const tokenizedArr = tokenizer.tokenize(text);
 
   if (!tokenizedArr || tokenizedArr.length === 0) {
-    throw new Error(
-      "Tokenization failed: input string was empty or contained invalid tokens."
-    );
+    throw new Error("Tokenization failed: input string was empty or contained invalid tokens.");
   }
 
   return tokenizedArr;
 };
 
 // takes in a transcript and returns an array with chunks of the transcript based on token estimation
-export const batchTranscript = (
-  tokenizedTranscript: string[],
-  maxBatchSize: number
-): string[] => {
+export const batchTranscript = (tokenizedTranscript: string[], maxBatchSize: number): string[] => {
   const batches: string[] = [];
   const tokenizedTranscriptLength = tokenizedTranscript.length;
 

@@ -33,7 +33,9 @@ export const actions = {
     const uid = uuidv4();
 
     console.log(
-      `Started new workflow for ${filename} (${audioFile.type}) of size ${audioFile.size / 1000000}MB.`
+      `Started new workflow for ${filename} (${audioFile.type}) of size ${
+        audioFile.size / 1000000
+      }MB.`
     );
 
     const audioBuffer = Buffer.from(await audioFile.arrayBuffer());
@@ -46,10 +48,7 @@ export const actions = {
 
         const transcriptionResult = res.text;
 
-        await writeFile(
-          `${TEMPORARY_DIRECTORY}/${uid}.txt`,
-          transcriptionResult
-        );
+        await writeFile(`${TEMPORARY_DIRECTORY}/${uid}.txt`, transcriptionResult);
 
         return transcriptionResult;
       })
@@ -65,8 +64,8 @@ export const actions = {
         filename: filename,
         name: path.parse(audioFile.name).name,
         uid: uid,
-        success: true,
-      },
+        success: true
+      }
     };
   },
 
@@ -113,12 +112,12 @@ export const actions = {
         transcription: transcription,
         filename: filename,
         uid: uid,
-        success: true,
+        success: true
       },
       summarize: {
         summary,
-        success: true,
-      },
+        success: true
+      }
     };
   }
 } satisfies Actions;

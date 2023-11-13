@@ -13,7 +13,7 @@ export const completion = async (model: string, prompt: string, length: number) 
     temperature: 0.5,
     frequency_penalty: 0.5,
     presence_penalty: 0.0,
-    prompt,
+    prompt
   });
 
   return completion.choices[0].text.trim();

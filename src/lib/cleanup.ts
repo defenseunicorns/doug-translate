@@ -26,8 +26,6 @@ export const clearTmp = async (tempDir: string) => {
       }
     }
   } catch (error) {
-    console.log(
-      `\tTemp directory clean-up failed: ${(error as Error).message}`
-    );
+    console.log(`\tTemp directory clean-up failed: ${(error as Error).message}`);
   }
 };

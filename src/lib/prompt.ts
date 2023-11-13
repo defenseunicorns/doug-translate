@@ -21,9 +21,7 @@ export const generateSummarizationPrompt = (
   transcription: string,
   finalSummary?: boolean
 ) => {
-  const systemPrompt = finalSummary
-    ? SUMMARY_PROMPT
-    : INTERMEDIATE_SUMMARY_PROMPT;
+  const systemPrompt = finalSummary ? SUMMARY_PROMPT : INTERMEDIATE_SUMMARY_PROMPT;
 
   if (model === "mpt-7b-chat") {
     return `<|im_start|>system ${systemPrompt}<|im_end|>

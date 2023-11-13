@@ -2,7 +2,6 @@
     import {enhance} from "$app/forms";
     import DownloadText from "$lib/components/download-text.svelte";
     import {slide, fly} from "svelte/transition";
-    import {writable} from "svelte/store";
 
     export let form;
 

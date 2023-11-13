@@ -15,7 +15,7 @@ zarf package deploy \
     --confirm
 
 zarf package deploy \
-    pkgs/zarf-package-doug-translate-amd64-0.0.1.tar.zst \
+    pkgs/zarf-package-doug-translate-amd64-0.1.0.tar.zst \
     --set LEAPFROGAI_BASE_URL="$1" \
     --set DOMAIN="$2" \
     --set SUMMARIZATION_MODEL="$3" \

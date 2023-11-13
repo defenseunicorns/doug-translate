@@ -7,4 +7,4 @@ docker run \
     --name doug-translate \
     --rm \
     --env LEAPFROGAI_BASE_URL="$1" \
-    defenseunicorns/doug-translate:0.0.1
+    ghcr.io/defenseunicorns/doug-translate:0.1.0

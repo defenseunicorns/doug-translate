@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { enhance } from "$app/forms";
-  import DownloadText from "$lib/components/download-text.svelte";
-  import { slide, fly } from "svelte/transition";
-  export let form;
+    import {enhance} from "$app/forms";
+    import DownloadText from "$lib/components/download-text.svelte";
+    import {slide, fly} from "svelte/transition";
+
+    export let form;
 
   let uploading = false;
   let summarizing = false;
@@ -16,27 +17,53 @@
 
   let err: Error | null = null;
 
-  const autorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
-  let filename = "";
-  const upload = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    if (!target.files) return;
-    const file = target.files[0];
-    if (!file) return;
-    // this is from BODY_SIZE_LIMIT in the dockerfile
-    if (file.size > 65540000) {
-      err = new Error("File size must be less than 500MB");
-      dialogRef.showModal();
+    const authorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
+    let filename = "";
+    const upload = (event: Event) => {
+        const target = event.target as HTMLInputElement;
+        if (!target.files) return;
+        const file = target.files[0];
+        if (!file) return;
+        filename = file.name;
+    };
+
+    let transcript = ""
+
+    function getTranscriptionRequest() {
+        return {
+            method: 'POST',
+            body: JSON.stringify({uid: form?.upload?.uid}),
+            headers: new Headers({
+                'Content-Type': 'application/json; charset=UTF-8'
+            })
+        }
     }
-    filename = file.name;
-  };
 
-  $: showTranscript = !uploading && form && form.upload && form.upload.success;
-  $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
+    function retrieveTranscription(uid: string | File | undefined) {
+        if (uid !== undefined && uid !== "") {
+            fetch("/transcription", getTranscriptionRequest())
+                .then(async function (value: Response) {
+                    let json = await value.json()
 
-  $: transcript = form?.upload?.transcript;
-  $: name = form?.upload?.name;
-  $: summary = form?.summarize?.summary;
+                    if (json.result === "Complete") {
+                        transcript = json.transcription
+                        uploading = false;
+                        return
+                    }
+                });
+        }
+
+        if (uploading) {
+            setTimeout(retrieveTranscription, 5000, uid);
+        }
+    }
+    $: retrieveTranscription(form?.upload?.uid);
+
+    $: showTranscript = !uploading && form && form.upload && form.upload.success;
+    $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
+
+    $: name = form?.upload?.filename;
+    $: summary = form?.summarize?.summary;
 </script>
 
 <svelte:head>
@@ -71,8 +98,8 @@
 </dialog>
 
 {#if uploading}
-  <div class="hero min-h-screen">
-    <div class="hero-content flex flex-col gap-6 prose">
+  <div class="hero min-h-screen -mt-20">
+    <div class="hero-content flex flex-col prose">
       <span class="loading loading-infinity w-40" />
       <span class="uppercase text-2xl">processing "{filename.trim()}"</span>
     </div>
@@ -85,7 +112,6 @@
         uploading = true;
         return async ({ update }) => {
           await update();
-          uploading = false;
         };
       }}
       enctype="multipart/form-data"
@@ -96,7 +122,7 @@
       <div class="flex flex-row gap-2">
         <input
           name="audioUpload"
-          accept={autorizedExtensions.join(",")}
+          accept={authorizedExtensions.join(",")}
           required
           type="file"
           class="file-input file-input-primary file-input-lg w-full"
@@ -131,26 +157,28 @@
         </div>
       {/if}
 
-      <div class="p-3 bg-base-100 rounded-lg my-4">
-        {#if summarizing}
-          <progress class="progress w-56" />
-          <progress class="progress w-56" />
-          <progress class="progress w-56" />
-        {/if}
+      <div class="pt-8">
         {#if selectedTab === "transcript"}
-          <div class="w-full flex justify-end">
-            <DownloadText title="Download Transcript" content={String(transcript)} name={name + "-transcript.txt"} />
-          </div>
-          {transcript}
+          <DownloadText title="Download Transcript" content={String(transcript)} name={name + "-transcript.txt"} />
         {:else if selectedTab === "summary" && summary}
-          <div class="w-full flex justify-end">
-            <DownloadText title="Download Summary" content={summary} name={name + "-summary.txt"} />
-          </div>
-          {summary}
-        {:else}
-          {""}
+          <DownloadText title="Download Summary" content={summary} name={name + "-summary.txt"} />
         {/if}
-      </div>
+    </div>
+
+            <div class="pt-1 px-1 rounded-lg my-4 mb-20">
+                {#if summarizing}
+                    <progress class="progress"/>
+                {/if}
+                {#if selectedTab === "transcript"}
+                    {transcript}
+                {:else if selectedTab === "summary" && summary}
+                    <p class="whitespace-pre-line">
+                        {summary}
+                    </p>
+                {:else}
+                    {""}
+                {/if}
+            </div>
 
       {#if showTranscript && !showSummary}
         <form
@@ -165,10 +193,10 @@
             };
           }}
         >
-          <input type="hidden" name="name" value={name} />
-          <input type="hidden" name="transcription" value={transcript} />
-          <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-info btn mr-8 mb-20">Summarize?</button>
-        </form>
+          <input type="hidden" name="filename" value={form?.upload?.filename} />
+          <input type="hidden" name="uid" value={form?.upload?.uid} />
+          <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-20">Summarize?</button>
+      </form>
       {/if}
     </section>
   {/if}

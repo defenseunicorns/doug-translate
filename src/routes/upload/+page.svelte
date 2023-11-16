@@ -1,9 +1,9 @@
 <script lang="ts">
-    import {enhance} from "$app/forms";
-    import DownloadText from "$lib/components/download-text.svelte";
-    import {slide, fly} from "svelte/transition";
+  import { enhance } from "$app/forms";
+  import DownloadText from "$lib/components/download-text.svelte";
+  import { slide, fly } from "svelte/transition";
 
-    export let form;
+  export let form;
 
   let uploading = false;
   let summarizing = false;
@@ -17,53 +17,52 @@
 
   let err: Error | null = null;
 
-    const authorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
-    let filename = "";
-    const upload = (event: Event) => {
-        const target = event.target as HTMLInputElement;
-        if (!target.files) return;
-        const file = target.files[0];
-        if (!file) return;
-        filename = file.name;
+  const authorizedExtensions = [".mp3", ".mp4", ".mpeg", ".mpga", ".m4a", ".wav", ".webm"];
+  let filename = "";
+  const upload = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (!target.files) return;
+    const file = target.files[0];
+    if (!file) return;
+    filename = file.name;
+  };
+
+  let transcript = "";
+
+  function getTranscriptionRequest() {
+    return {
+      method: "POST",
+      body: JSON.stringify({ uid: form?.upload?.uid }),
+      headers: new Headers({
+        "Content-Type": "application/json; charset=UTF-8"
+      })
     };
+  }
 
-    let transcript = ""
+  function retrieveTranscription(uid: string | File | undefined) {
+    if (uid !== undefined && uid !== "") {
+      fetch("/transcription", getTranscriptionRequest()).then(async function (value: Response) {
+        let json = await value.json();
 
-    function getTranscriptionRequest() {
-        return {
-            method: 'POST',
-            body: JSON.stringify({uid: form?.upload?.uid}),
-            headers: new Headers({
-                'Content-Type': 'application/json; charset=UTF-8'
-            })
+        if (json.result === "Complete") {
+          transcript = json.transcription;
+          uploading = false;
+          return;
         }
+      });
     }
 
-    function retrieveTranscription(uid: string | File | undefined) {
-        if (uid !== undefined && uid !== "") {
-            fetch("/transcription", getTranscriptionRequest())
-                .then(async function (value: Response) {
-                    let json = await value.json()
-
-                    if (json.result === "Complete") {
-                        transcript = json.transcription
-                        uploading = false;
-                        return
-                    }
-                });
-        }
-
-        if (uploading) {
-            setTimeout(retrieveTranscription, 5000, uid);
-        }
+    if (uploading) {
+      setTimeout(retrieveTranscription, 5000, uid);
     }
-    $: retrieveTranscription(form?.upload?.uid);
+  }
+  $: retrieveTranscription(form?.upload?.uid);
 
-    $: showTranscript = !uploading && form && form.upload && form.upload.success;
-    $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
+  $: showTranscript = !uploading && form && form.upload && form.upload.success;
+  $: showSummary = !summarizing && form && form.summarize && form.summarize.success;
 
-    $: name = form?.upload?.filename;
-    $: summary = form?.summarize?.summary;
+  $: name = form?.upload?.filename;
+  $: summary = form?.summarize?.summary;
 </script>
 
 <svelte:head>
@@ -128,8 +127,19 @@
           class="file-input file-input-primary file-input-lg w-full"
           on:input={upload}
         />
-        <button disabled={uploading} on:click={() => (timerStart = Date.now())} type="submit" class="btn btn-primary btn-outline h-auto"
-          >Upload <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <button
+          disabled={uploading}
+          on:click={() => (timerStart = Date.now())}
+          type="submit"
+          class="btn btn-primary btn-outline h-auto"
+          >Upload <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -149,36 +159,45 @@
       {#if showSummary || summarizing}
         <div class="flex w-full m-auto justify-center">
           <div class="tabs tabs-boxed">
-            <button on:click={() => (selectedTab = "transcript")} class={`tab text-lg ${selectedTab === "transcript" ? "tab-active" : ""}`}
+            <button
+              on:click={() => (selectedTab = "transcript")}
+              class={`tab text-lg ${selectedTab === "transcript" ? "tab-active" : ""}`}
               >Transcript</button
             >
-            <button on:click={() => (selectedTab = "summary")} class={`tab text-lg ${selectedTab === "summary" ? "tab-active" : ""}`}>Summary</button>
+            <button
+              on:click={() => (selectedTab = "summary")}
+              class={`tab text-lg ${selectedTab === "summary" ? "tab-active" : ""}`}>Summary</button
+            >
           </div>
         </div>
       {/if}
 
       <div class="pt-8">
         {#if selectedTab === "transcript"}
-          <DownloadText title="Download Transcript" content={String(transcript)} name={name + "-transcript.txt"} />
+          <DownloadText
+            title="Download Transcript"
+            content={String(transcript)}
+            name={name + "-transcript.txt"}
+          />
         {:else if selectedTab === "summary" && summary}
           <DownloadText title="Download Summary" content={summary} name={name + "-summary.txt"} />
         {/if}
-    </div>
+      </div>
 
-            <div class="pt-1 px-1 rounded-lg my-4 mb-20">
-                {#if summarizing}
-                    <progress class="progress"/>
-                {/if}
-                {#if selectedTab === "transcript"}
-                    {transcript}
-                {:else if selectedTab === "summary" && summary}
-                    <p class="whitespace-pre-line">
-                        {summary}
-                    </p>
-                {:else}
-                    {""}
-                {/if}
-            </div>
+      <div class="pt-1 px-1 rounded-lg my-4 mb-20">
+        {#if summarizing}
+          <progress class="progress" />
+        {/if}
+        {#if selectedTab === "transcript"}
+          {transcript}
+        {:else if selectedTab === "summary" && summary}
+          <p class="whitespace-pre-line">
+            {summary}
+          </p>
+        {:else}
+          {""}
+        {/if}
+      </div>
 
       {#if showTranscript && !showSummary}
         <form
@@ -195,8 +214,13 @@
         >
           <input type="hidden" name="filename" value={form?.upload?.filename} />
           <input type="hidden" name="uid" value={form?.upload?.uid} />
-          <button on:click={() => (selectedTab = "summary")} type="submit" name="submit" class="toast btn-accent btn mr-8 mb-20">Summarize?</button>
-      </form>
+          <button
+            on:click={() => (selectedTab = "summary")}
+            type="submit"
+            name="submit"
+            class="toast btn-accent btn mr-8 mb-20">Summarize?</button
+          >
+        </form>
       {/if}
     </section>
   {/if}

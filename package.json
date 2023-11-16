@@ -37,7 +37,7 @@
     "@fontsource/pt-mono": "^5.0.2",
     "@fontsource/pt-sans": "^5.0.8",
     "natural": "^6.8.0",
-    "openai": "^4.17.0",
+    "openai": "^4.19.0",
     "uuid": "^9.0.1"
   }
 }

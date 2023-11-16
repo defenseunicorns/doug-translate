@@ -165,7 +165,7 @@
             60
           ).toFixed(2)} minutes</code
         >
-      {:else}
+      {:else if summary}
         <code
           >Summarization took {(
             (summarizationTimerEnd - summarizationTimerStart) /

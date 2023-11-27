@@ -1,4 +1,4 @@
-export const minutes = (
+export const minutesElapsed = (
     start: number,
     end: number,
 ): string => {

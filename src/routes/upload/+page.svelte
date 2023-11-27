@@ -2,6 +2,7 @@
   import { enhance } from "$app/forms";
   import DownloadText from "$lib/components/download-text.svelte";
   import { slide, fly } from "svelte/transition";
+  import {minutes} from "$lib/helper";
 
   export let form;
 
@@ -159,19 +160,11 @@
     <section in:slide class="prose max-w-none py-3">
       {#if selectedTab === "transcript"}
         <code
-          >Transcription took {(
-            (transcriptionTimerEnd - transcriptionTimerStart) /
-            1000 /
-            60
-          ).toFixed(2)} minutes</code
+          >Transcription took {minutes(transcriptionTimerStart, transcriptionTimerEnd)} minutes</code
         >
       {:else if summary}
         <code
-          >Summarization took {(
-            (summarizationTimerEnd - summarizationTimerStart) /
-            1000 /
-            60
-          ).toFixed(2)} minutes</code
+          >Summarization took {minutes(summarizationTimerStart, summarizationTimerEnd)} minutes</code
         >
       {/if}
       <blockquote>"{filename}"</blockquote>

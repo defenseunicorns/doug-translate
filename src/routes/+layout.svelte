@@ -11,7 +11,6 @@
   </div>
   <div class="flex-none">
     <ul class="menu menu-horizontal px-1">
-      <li class="hidden"><a href="/models">Models</a></li>
       <li><a href="/upload">Upload</a></li>
       <li><a href="/help">Help</a></li>
       <li><ThemeSwitcher /></li>

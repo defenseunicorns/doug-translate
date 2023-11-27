@@ -11,11 +11,4 @@
     or if you encounter any issues, roadblocks, or concerns, please do not hesitate to reach out to
     the email above.
   </p>
-  <a class="btn btn-primary hidden" href="https://github.com/defenseunicorns/doug-translate"
-    >Source Code</a
-  >
-  <a
-    class="btn btn-secondary hidden"
-    href="https://github.com/defenseunicorns/doug-translate/issues/new">New Issue</a
-  >
 </section>

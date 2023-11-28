@@ -2,7 +2,7 @@
   import { enhance } from "$app/forms";
   import DownloadText from "$lib/components/download-text.svelte";
   import { slide, fly } from "svelte/transition";
-  import {minutesElapsed} from "$lib/helper";
+  import { minutesElapsed } from "$lib/helper";
 
   export let form;
 

@@ -10,12 +10,13 @@ export default {
       {
         dracula: {
           // eslint-disable-next-line @typescript-eslint/no-var-requires
-          ...require("daisyui/src/theming/themes")["[data-theme=dracula]"],
+          ...require("daisyui/src/theming/themes")["dracula"],
           primary: "#2563eb",
           secondary: "#8b5cf6"
         }
       },
       "winter"
-    ]
+    ],
+    darkTheme: "dracula"
   }
 };

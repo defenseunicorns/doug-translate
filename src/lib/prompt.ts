@@ -5,7 +5,7 @@ const INTERMEDIATE_SUMMARY_PROMPT =
   "It is important to avoid any risks such as misinterpreting the text, omitting crucial information, " +
   "or distorting the original meaning. Use clear and specific language, " +
   "ensuring that the summary is coherent, well-organized, and effectively communicates the main ideas of the " +
-  "original text. A reader of the summary should be able to get a good gist of what thr original text was about.";
+  "original text. A reader of the summary should be able to get a good gist of what the original text was about.";
 
 const SUMMARY_PROMPT =
   "You are a summarizer tasked with creating summaries." +

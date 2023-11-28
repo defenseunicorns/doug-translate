@@ -3,7 +3,8 @@ import { env } from "$env/dynamic/private";
 
 export const openai = new OpenAI({
   apiKey: "empty",
-  baseURL: env.LEAPFROGAI_BASE_URL
+  baseURL: env.LEAPFROGAI_BASE_URL,
+  timeout: 36000 * 1000
 });
 
 export const completion = async (model: string, prompt: string, length: number) => {

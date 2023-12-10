@@ -46,7 +46,9 @@ jobs:
         run: brew install defenseunicorns/tap/uds@0.4.1
 
       - name: UDS K3d (K3d + Metallb + Istio + Zarf Init)
-        run: uds deploy oci://ghcr.io/defenseunicorns/packages/uds/bundles/k3d-core-istio:amd64 --confirm -l=trace --oci-concurrency=5
+        run: |
+          export TAG=0.6.1-amd64
+          uds deploy "oci://🦄/uds/bundles/k3d-core-istio:$TAG" --confirm -l=trace --oci-concurrency=5
 
       - name: Deploy Dos-Games
         run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --oci-concurrency=5 --key https://zarf.dev/cosign.pub

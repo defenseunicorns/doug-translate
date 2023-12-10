@@ -27,18 +27,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
       - name: Use Node.js 20
         uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4.0.0
         with:
           node-version: 20
           cache: npm
-
-      - run: mkdir -p pkgs
-
-      - run: ./hack/build.sh
-
-      - name: Setup K3d
-        run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
       - name: Setup Zarf
         uses: defenseunicorns/setup-zarf@v1.0.0
@@ -46,6 +40,13 @@ jobs:
           # renovate: datasource=github-tags depName=defenseunicorns/zarf versioning=semver
           # version: v0.31.1
           download-init-package: true
+
+      - run: mkdir -p pkgs
+
+      - run: ./hack/build.sh
+
+      - name: Setup K3d
+        run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
 
       - name: Set up Homebrew
         uses: Homebrew/actions/setup-homebrew@master

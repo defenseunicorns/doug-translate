@@ -36,11 +36,11 @@ jobs:
       - name: Cluster Up
         run: |
           export UDS_K3D_VERSION=0.2.1
-          zarf package deploy oci://defenseunicorns/uds-k3d:${UDS_K3D_VERSION}-amd64 --confirm -l=trace --no-progress --oci-concurrency=5
+          zarf package deploy oci://defenseunicorns/uds-k3d:${UDS_K3D_VERSION}-amd64 --confirm -l=trace --oci-concurrency=5
       - name: Zarf Init
         run: zarf init --confirm -l=trace --no-progress
       - name: Deploy Dos-Games
-        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --no-progress --oci-concurrency=5 --key https://zarf.dev/cosign.pub
+        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --oci-concurrency=5 --key https://zarf.dev/cosign.pub
       - name: List Packages
         run: zarf package list
       - name: Use Node.js 20

@@ -21,6 +21,11 @@ variables:
     default: ctransformers
     prompt: true
     sensitive: false
+  - name: PREFIX
+    description: Prefix for requests to the application
+    default: "/transcription"
+    prompt: true
+    sensitive: false
 
 components:
   - name: translate-ui

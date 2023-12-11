@@ -36,7 +36,7 @@
   "dependencies": {
     "@fontsource/pt-mono": "^5.0.2",
     "@fontsource/pt-sans": "^5.0.8",
-    "natural": "^6.10.3",
+    "natural": "^6.10.4",
     "openai": "^4.20.1",
     "uuid": "^9.0.1"
   },

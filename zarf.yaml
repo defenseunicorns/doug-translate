@@ -12,7 +12,7 @@ variables:
     prompt: true
     sensitive: true
   - name: DOMAIN
-    description: The domain to use for the application (istio-ingress shenanigans)
+    description: The user facing url in this format "localhost:8080" (istio-ingress shenanigans)
     default: bigbang.dev
     prompt: true
     sensitive: true

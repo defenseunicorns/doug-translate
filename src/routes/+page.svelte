@@ -1,3 +1,7 @@
+<script>
+  import {base} from "$app/paths";
+</script>
+
 <svelte:head>
   <title>LF Transcribe</title>
 </svelte:head>
@@ -10,7 +14,7 @@
         Leapfrog Transcribe is a transcription and summarization service leveraging the powers of
         LeapfrogAI.
       </p>
-      <a href="/upload"><button class="btn btn-primary">Upload an Audio File</button></a>
+      <a href="{base}/upload"><button class="btn btn-primary">Upload an Audio File</button></a>
     </div>
   </div>
 </div>

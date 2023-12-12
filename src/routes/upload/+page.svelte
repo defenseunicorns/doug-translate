@@ -3,6 +3,7 @@
   import DownloadText from "$lib/components/download-text.svelte";
   import { slide, fly } from "svelte/transition";
   import { minutesElapsed } from "$lib/helper";
+  import {base} from "$app/paths";
 
   export let form;
 
@@ -45,7 +46,7 @@
 
   function retrieveTranscription(uid: string | File | undefined) {
     if (uid !== undefined && uid !== "") {
-      fetch("/transcription", getTranscriptionRequest()).then(async function (value: Response) {
+      fetch("{base}/transcription", getTranscriptionRequest()).then(async function (value: Response) {
         let json = await value.json();
 
         if (json.result === "Complete") {
@@ -120,7 +121,7 @@
       }}
       enctype="multipart/form-data"
       class="flex flex-col gap-4"
-      action="?/upload"
+      action="{base}?/upload"
       bind:this={formRef}
     >
       <div class="flex flex-row gap-2">
@@ -216,7 +217,7 @@
         <form
           in:fly
           method="POST"
-          action="?/summarize"
+          action="{base}?/summarize"
           use:enhance={() => {
             summarizing = true;
             return async ({ update }) => {

@@ -22,6 +22,8 @@ spec:
               value: "###ZARF_VAR_LEAPFROGAI_BASE_URL###"
             - name: ORIGIN
               value: "https://###ZARF_VAR_DOMAIN###"
+            - name: URL_PREFIX
+              value: "###ZARF_VAR_PREFIX###"
           resources:
             requests:
               memory: "5Gi"

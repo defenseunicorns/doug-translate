@@ -23,7 +23,7 @@ variables:
     sensitive: false
   - name: PREFIX
     description: Prefix for requests to the application
-    default: "/transcription"
+    default: "/lftranscribe"
     prompt: true
     sensitive: false
 

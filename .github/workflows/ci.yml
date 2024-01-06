@@ -27,25 +27,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Setup K3d
-        run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-      - run: ./hack/cluster-up.sh
-      - name: Setup Zarf
-        uses: defenseunicorns/setup-zarf@v1.0.0
-        with:
-          download-init-package: true
-      - name: Zarf Init
-        run: zarf init --confirm -l=trace --no-progress
-      - name: Deploy Dos-Games
-        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --no-progress --oci-concurrency=5 --key https://zarf.dev/cosign.pub
-      - name: List Packages
-        run: zarf package list
+
       - name: Use Node.js 20
         uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8 # v4.0.1
         with:
           node-version: 20
           cache: npm
+
+      - name: Setup Zarf
+        uses: defenseunicorns/setup-zarf@v1.0.0
+        with:
+          # renovate: datasource=github-tags depName=defenseunicorns/zarf versioning=semver
+          # version: v0.31.1
+          download-init-package: true
+
       - run: mkdir -p pkgs
+
       - run: ./hack/build.sh
+
+      - name: Setup K3d
+        run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+      - name: Set up Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Install UDS CLI
+        shell: bash
+        # renovate: datasource=github-tags depName=defenseunicorns/uds-cli versioning=semver
+        run: brew install defenseunicorns/tap/uds@0.4.1
+
+      - name: UDS K3d (K3d + Metallb + Istio + Zarf Init)
+        run: |
+          export TAG=0.6.1-amd64
+          uds deploy "oci://🦄/uds/bundles/k3d-core-istio:$TAG" --confirm -l=trace --oci-concurrency=5
+
+      - name: Deploy Dos-Games
+        run: zarf package deploy oci://🦄/dos-games:1.0.0-amd64 --confirm -l=trace --oci-concurrency=5 --key https://zarf.dev/cosign.pub
+
+      - name: List Packages
+        run: zarf package list
+
       - run: ./hack/deploy-amd64.sh "leapfrog.du.dev" "du.dev" "ctransformers" # dummy env vars
+
       - run: zarf package inspect doug-translate

@@ -15,6 +15,7 @@
     "@sveltejs/adapter-node": "^1.2.4",
     "@sveltejs/kit": "^1.27.3",
     "@tailwindcss/typography": "^0.5.9",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
     "autoprefixer": "^10.4.14",
@@ -30,7 +31,7 @@
     "tslib": "^2.6.2",
     "typescript": "^5.3.2",
     "vite": "^4.5.1",
-    "@types/uuid": "^9.0.7"
+    "vite-plugin-wasm-pack": "^0.1.12"
   },
   "type": "module",
   "dependencies": {
